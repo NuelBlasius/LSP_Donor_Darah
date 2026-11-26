@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 460" fill="none">
+<ellipse cx="310" cy="252" rx="245" ry="190" fill="#FFE3E7"/>
+<circle cx="486" cy="103" r="42" fill="#FFF3F5" stroke="#F5A7B2" stroke-width="8"/>
+<path d="M486 78C486 78 467 101 467 112C467 123 475 132 486 132C497 132 505 123 505 112C505 101 486 78 486 78Z" fill="#D82B40"/>
+<path d="M417 98C417 98 431 83 449 85" stroke="#F08A98" stroke-width="8" stroke-linecap="round"/>
+<path d="M445 61C445 61 470 30 507 48C535 62 538 92 526 115" stroke="#E98998" stroke-width="7" stroke-linecap="round"/>
+<!-- donation chair -->
+<path d="M148 255H305L328 385H174L148 255Z" fill="#C91F32"/>
+<path d="M151 257H302L318 294H159L151 257Z" fill="#E64A5D"/>
+<path d="M171 383H194L185 425H162L171 383Z" fill="#8D1423"/>
+<path d="M296 383H318L328 425H306L296 383Z" fill="#8D1423"/>
+<path d="M117 246C117 226 133 210 153 210H180V304H153C133 304 117 288 117 268V246Z" fill="#B71D30"/>
+<!-- person torso -->
+<path d="M243 192C265 176 315 180 337 208L370 310H242L218 236C214 219 225 202 243 192Z" fill="#E13B4F"/>
+<path d="M248 204L280 238L317 202L337 219L309 280H255L234 226L248 204Z" fill="#C91F32"/>
+<!-- neck -->
+<rect x="267" y="165" width="45" height="44" rx="16" fill="#F2A47F"/>
+<!-- head -->
+<path d="M244 119C244 86 268 65 300 65C332 65 352 89 350 122L344 158C340 183 320 199 296 199C271 199 251 181 248 157L244 119Z" fill="#F5B18B"/>
+<!-- hair -->
+<path d="M241 122C226 90 245 58 282 50C316 42 350 62 358 91C361 106 355 126 349 135L339 112C326 111 313 103 306 91C292 108 270 114 250 113L241 122Z" fill="#25212A"/>
+<path d="M251 116C248 100 260 88 275 86C294 84 314 95 325 108C332 117 339 121 347 122L342 145C338 170 319 188 296 188C273 188 255 171 252 149L251 116Z" fill="#F5B18B"/>
+<circle cx="278" cy="135" r="4.5" fill="#27212B"/><circle cx="321" cy="135" r="4.5" fill="#27212B"/>
+<path d="M285 157C294 166 306 166 314 157" stroke="#A94B4D" stroke-width="5" stroke-linecap="round"/>
+<path d="M248 121C252 109 264 102 277 102" stroke="#25212A" stroke-width="9" stroke-linecap="round"/>
+<!-- arm and hand -->
+<path d="M337 221C365 227 380 249 399 265L433 284C445 291 441 306 429 309L390 299C366 293 344 280 327 260L314 244L337 221Z" fill="#F5B18B"/>
+<path d="M253 237C232 250 221 274 232 294L256 326H309L298 294L285 254C279 238 266 231 253 237Z" fill="#F5B18B"/>
+<path d="M256 319H308L334 355C344 369 336 384 321 384H260L235 351C226 338 239 319 256 319Z" fill="#E13B4F"/>
+<!-- legs -->
+<path d="M259 354H321L360 399C370 412 360 430 344 430H274L240 394C230 380 242 354 259 354Z" fill="#2D405C"/>
+<path d="M311 354H351L386 395C397 409 387 430 370 430H338L298 390C285 377 295 354 311 354Z" fill="#354C6B"/>
+<path d="M270 426H343" stroke="#19283D" stroke-width="13" stroke-linecap="round"/><path d="M367 426H410" stroke="#19283D" stroke-width="13" stroke-linecap="round"/>
+<!-- blood bag and stand -->
+<path d="M459 148V188" stroke="#677080" stroke-width="8" stroke-linecap="round"/>
+<path d="M438 184H480" stroke="#677080" stroke-width="8" stroke-linecap="round"/>
+<path d="M441 188H479L474 257C473 269 464 276 452 276C440 276 431 269 430 257L425 188H441Z" fill="#FFF9FA" stroke="#D9A0A8" stroke-width="5"/>
+<path d="M434 215H475L472 253C471 262 464 267 453 267C442 267 436 262 435 253L434 215Z" fill="#D9273D"/>
+<path d="M454 224C454 224 443 238 443 245C443 251 448 256 454 256C460 256 465 251 465 245C465 238 454 224 454 224Z" fill="#FFF"/>
+<path d="M460 276V301" stroke="#D9273D" stroke-width="5" stroke-linecap="round"/>
+<path d="M460 301C460 301 449 315 449 321C449 327 454 332 460 332C466 332 471 327 471 321C471 315 460 301 460 301Z" fill="#D9273D"/>
+<!-- sparkles -->
+<path d="M117 130L123 145L138 151L123 157L117 172L111 157L96 151L111 145L117 130Z" fill="#F4A4AF"/>
+<circle cx="184" cy="105" r="6" fill="#F4A4AF"/><circle cx="530" cy="237" r="7" fill="#F4A4AF"/>
+</svg>

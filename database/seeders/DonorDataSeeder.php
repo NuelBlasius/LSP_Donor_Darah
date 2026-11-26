@@ -15,6 +15,7 @@ class DonorDataSeeder extends Seeder
             ['email' => 'admin@donor.test'],
             [
                 'name' => 'Admin Donor',
+                'nomor_telepon' => '081200000001',
                 'password' => Hash::make('admin12345'),
                 'role' => 'admin',
                 'account_status' => 'approved',
@@ -28,6 +29,7 @@ class DonorDataSeeder extends Seeder
             ['email' => 'andi@donor.test'],
             [
                 'name' => 'Andi Saputra',
+                'nomor_telepon' => '081200000002',
                 'password' => Hash::make('donor12345'),
                 'role' => 'donor',
                 'account_status' => 'approved',
@@ -40,6 +42,7 @@ class DonorDataSeeder extends Seeder
             ['email' => 'siti@donor.test'],
             [
                 'name' => 'Siti Amelia',
+                'nomor_telepon' => '081200000003',
                 'password' => Hash::make('donor12345'),
                 'role' => 'donor',
                 'account_status' => 'pending',

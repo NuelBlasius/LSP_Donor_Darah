@@ -16,24 +16,23 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'nomor_telepon' => 'required|string|max:20',
+            'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|min:8|confirmed',
         ]);
 
         $user = new User();
-
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
+        $user->name = $validated['name'];
+        $user->nomor_telepon = $validated['nomor_telepon'];
+        $user->email = $validated['email'];
+        $user->password = Hash::make($validated['password']);
         $user->role = 'donor';
         $user->account_status = 'pending';
-
         $user->save();
 
         Auth::login($user);
-
         $request->session()->regenerate();
 
         return redirect()->route('dashboard')
@@ -49,29 +48,28 @@ class AuthController extends Controller
     {
         $credentials = $request->validate([
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required|string',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            return redirect()->route('dashboard')
+            return redirect()->intended(route('dashboard'))
                 ->with('success', 'Login berhasil.');
         }
 
         return back()->withErrors([
-            'email' => 'Email atau password salah.',
+            'email' => 'Email atau kata sandi salah.',
         ])->onlyInput('email');
     }
 
     public function logout(Request $request)
     {
         Auth::logout();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect()->route('home')
-            ->with('success', 'Anda berhasil logout.');
+            ->with('success', 'Anda berhasil keluar.');
     }
 }
