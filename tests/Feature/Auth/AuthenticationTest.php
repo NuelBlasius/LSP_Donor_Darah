@@ -12,12 +12,10 @@ class AuthenticationTest extends TestCase
 
     public function test_login_screen_can_be_rendered(): void
     {
-        $response = $this->get('/login');
-
-        $response->assertStatus(200);
+        $this->get('/login')->assertOk();
     }
 
-    public function test_users_can_authenticate_using_the_login_screen(): void
+    public function test_donor_can_login(): void
     {
         $user = User::factory()->create();
 
@@ -26,29 +24,41 @@ class AuthenticationTest extends TestCase
             'password' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $this->assertAuthenticatedAs($user);
+        $response->assertRedirect(route('dashboard'));
     }
 
-    public function test_users_can_not_authenticate_with_invalid_password(): void
+    public function test_invalid_password_is_rejected(): void
     {
         $user = User::factory()->create();
 
         $this->post('/login', [
             'email' => $user->email,
             'password' => 'wrong-password',
-        ]);
+        ])->assertSessionHasErrors('email');
 
         $this->assertGuest();
     }
 
-    public function test_users_can_logout(): void
+    public function test_user_can_logout(): void
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->post('/logout');
+        $this->actingAs($user)->post('/logout')->assertRedirect(route('home'));
 
         $this->assertGuest();
-        $response->assertRedirect('/');
+    }
+
+    public function test_admin_is_redirected_to_admin_dashboard(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+            'account_status' => 'approved',
+        ]);
+
+        $this->post('/login', [
+            'email' => $admin->email,
+            'password' => 'password',
+        ])->assertRedirect(route('admin.dashboard'));
     }
 }

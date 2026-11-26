@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,17 +23,27 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(Request $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'nomor_telepon' => ['required', 'string', 'max:20'],
+            'nik' => ['required', 'digits:16', 'unique:users,nik,' . $user->id],
+            'jenis_kelamin' => ['required', 'in:Laki-laki,Perempuan'],
+            'golongan_darah' => ['required', 'in:A+,A-,B+,B-,AB+,AB-,O+,O-'],
+            'tanggal_lahir' => ['required', 'date', 'before:today'],
+            'alamat' => ['required', 'string', 'max:1000'],
+        ]);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $user->fill($data);
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
+        $user->save();
 
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('profile.edit')->with('success', 'Data profil berhasil diperbarui.');
     }
 
     /**

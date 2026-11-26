@@ -1,143 +1,203 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard - DonorDarah')
+@section('title', 'Dashboard Pendonor | DonorDarah')
+@section('page-title', 'Dashboard')
 
 @section('content')
-<div class="dashboard-layout">
-    <aside class="dashboard-sidebar">
-        <a href="{{ route('home') }}" class="d-flex align-items-center gap-2 px-2 mb-4">
-            <span class="brand-mark" style="background:#fff;color:var(--blood)">+</span>
-            <span class="brand-name">DonorDarah</span>
-        </a>
+@php
+    $accountBadgeClass = 'text-bg-warning';
+    $accountBadgeText = 'Menunggu Verifikasi';
 
-        <div class="sidebar-menu">
-            <a href="{{ route('dashboard') }}" class="sidebar-link active"><span class="nav-symbol">⌂</span> Dashboard</a>
-            <a href="{{ route('home') }}#jadwal" class="sidebar-link"><span class="nav-symbol">▦</span> Pendaftaran Donor</a>
-            <a href="#riwayat" class="sidebar-link"><span class="nav-symbol">◷</span> Riwayat Donor</a>
-            <a href="{{ route('profile.edit') }}" class="sidebar-link"><span class="nav-symbol">♙</span> Profil Saya</a>
+    if ($user->account_status === 'approved') {
+        $accountBadgeClass = 'text-bg-success';
+        $accountBadgeText = 'Terverifikasi';
+    } elseif ($user->account_status === 'rejected') {
+        $accountBadgeClass = 'text-bg-danger';
+        $accountBadgeText = 'Ditolak';
+    }
+@endphp
+
+<div class="dashboard-wrap">
+    <section class="dashboard-welcome rounded-4 mb-4">
+        <div class="row align-items-center g-3">
+            <div class="col-lg-8">
+                <div class="small text-danger fw-semibold mb-2">DASHBOARD PENDONOR</div>
+                <h2 class="h3 fw-bold mb-2">
+                    Halo, {{ $user->name }}!
+                    <span aria-hidden="true">👋</span>
+                </h2>
+                <p class="text-secondary mb-3">
+                    Terima kasih telah menjadi bagian dari pendonor darah. Pantau status akun dan pendaftaran Anda di sini.
+                </p>
+                <a href="{{ route('services') }}" class="btn btn-danger">
+                    Cari Jadwal Donor <span aria-hidden="true">→</span>
+                </a>
+            </div>
+
+            <div class="col-lg-4 text-center d-none d-lg-block">
+                <img
+                    src="{{ asset('images/donor-illustration.svg') }}"
+                    class="welcome-art"
+                    alt=""
+                >
+            </div>
         </div>
+    </section>
 
-        <div class="sidebar-bottom">
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="sidebar-link border-0 bg-transparent w-100 text-start">
-                    <span class="nav-symbol">↪</span> Keluar
-                </button>
-            </form>
-        </div>
-    </aside>
-
-    <div class="dashboard-main">
-        <header class="dashboard-topbar">
+    <section class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-3 p-lg-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
             <div>
-                <h4 class="fw-bold mb-0">Dashboard</h4>
-                <div class="small text-muted d-none d-sm-block">Ringkasan aktivitas donor Anda</div>
-            </div>
-            <div class="d-flex align-items-center gap-3">
-                <span class="text-muted" title="Notifikasi">♧</span>
-                <div class="d-flex align-items-center gap-2">
-                    <div class="rounded-circle bg-danger-subtle text-blood fw-bold d-grid place-items-center" style="width:38px;height:38px;text-align:center;line-height:38px">
-                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                    </div>
-                    <div class="d-none d-sm-block">
-                        <div class="fw-semibold small">{{ auth()->user()->name }}</div>
-                        <div class="text-muted" style="font-size:.75rem">Pendonor</div>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <div class="dashboard-content">
-            <section class="dashboard-welcome mb-4">
-                <div class="position-relative" style="z-index:1">
-                    <div class="small text-blood fw-bold mb-2">DASHBOARD PENDONOR</div>
-                    <h2 class="mb-2">Halo, {{ auth()->user()->name }}! <span>👋</span></h2>
-                    <p class="text-muted mb-0">Terima kasih telah menjadi bagian dari pendonor darah. Setiap kontribusi Anda berarti bagi sesama.</p>
-                    <div class="mt-3">
-                        @php
-                            $accountStatus = auth()->user()->account_status ?? 'pending';
-                            $accountLabel = ['pending' => 'Menunggu Verifikasi', 'approved' => 'Akun Terverifikasi', 'rejected' => 'Akun Ditolak'];
-                            $accountClass = ['pending' => 'status-pending', 'approved' => 'status-approved', 'rejected' => 'status-rejected'];
-                        @endphp
-                        <span class="status-pill {{ $accountClass[$accountStatus] ?? 'status-other' }}">
-                            Status akun: {{ $accountLabel[$accountStatus] ?? ucfirst($accountStatus) }}
-                        </span>
-                    </div>
-                </div>
-            </section>
-
-            <div class="row g-3 mb-4">
-                <div class="col-sm-6 col-xl-4">
-                    <div class="stat-card">
-                        <div class="stat-icon">▦</div>
-                        <div><div class="stat-number">{{ $totalRegistrations }}</div><div class="stat-label">Total Pendaftaran</div></div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-xl-4">
-                    <div class="stat-card">
-                        <div class="stat-icon">◷</div>
-                        <div><div class="stat-number">{{ $pendingRegistrations }}</div><div class="stat-label">Menunggu Verifikasi</div></div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-xl-4">
-                    <div class="stat-card">
-                        <div class="stat-icon">♥</div>
-                        <div><div class="stat-number">{{ $completedDonations }}</div><div class="stat-label">Donor Selesai</div></div>
-                    </div>
-                </div>
+                <h2 class="h5 fw-bold mb-1">Status Verifikasi Akun</h2>
+                @if ($user->account_status === 'approved')
+                    <p class="text-secondary mb-0">
+                        Akun Anda telah disetujui. Anda dapat mendaftar jadwal donor yang tersedia.
+                    </p>
+                @elseif ($user->account_status === 'rejected')
+                    <p class="text-secondary mb-0">
+                        Akun belum disetujui. Silakan hubungi admin untuk informasi lebih lanjut.
+                    </p>
+                @else
+                    <p class="text-secondary mb-0">
+                        Admin sedang memeriksa akun Anda. Pendaftaran jadwal tersedia setelah akun disetujui.
+                    </p>
+                @endif
             </div>
 
-            <section class="dashboard-panel" id="riwayat">
-                <div class="dashboard-panel-head">
-                    <div>
-                        <h5 class="fw-bold mb-1">Pendaftaran Terbaru</h5>
-                        <p class="text-muted small mb-0">Status aktivitas donor Anda</p>
-                    </div>
-                    <a href="{{ route('home') }}#jadwal" class="auth-link small">Lihat Jadwal <span>›</span></a>
+            <span class="badge fs-6 px-3 py-2 {{ $accountBadgeClass }}">
+                {{ $accountBadgeText }}
+            </span>
+        </div>
+    </section>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="stat-card h-100">
+                <div class="stat-icon stat-icon-red">▦</div>
+                <div>
+                    <div class="h3 fw-bold mb-0">{{ $totalRegistrations }}</div>
+                    <div class="small text-secondary">Total Pendaftaran</div>
                 </div>
-                <div class="dashboard-panel-body">
-                    @if ($registrations->isEmpty())
-                        <div class="text-center py-5">
-                            <div class="feature-icon mx-auto mb-3">▦</div>
-                            <h6 class="fw-bold">Belum ada pendaftaran</h6>
-                            <p class="text-muted small mb-3">Saat ini Anda belum mendaftar jadwal donor darah.</p>
-                            <a href="{{ route('home') }}#jadwal" class="btn btn-blood">Cari Jadwal Donor</a>
-                        </div>
-                    @else
-                        <div class="table-responsive">
-                            <table class="table table-dashboard">
-                                <thead>
-                                    <tr>
-                                        <th>Tanggal Daftar</th>
-                                        <th>Jadwal Donor</th>
-                                        <th>Lokasi</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($registrations as $registration)
-                                        @php
-                                            $regStatus = $registration->registration_status ?? 'pending';
-                                            $regLabel = ['pending' => 'Menunggu Verifikasi', 'approved' => 'Disetujui', 'rejected' => 'Ditolak', 'completed' => 'Selesai'];
-                                            $regClass = ['pending' => 'status-pending', 'approved' => 'status-approved', 'rejected' => 'status-rejected', 'completed' => 'status-approved'];
-                                        @endphp
-                                        <tr>
-                                            <td>{{ \Illuminate\Support\Carbon::parse($registration->created_at)->format('d M Y') }}</td>
-                                            <td>
-                                                <div class="fw-semibold">{{ $registration->schedule_title }}</div>
-                                                <div class="small text-muted">{{ \Illuminate\Support\Carbon::parse($registration->schedule_date)->format('d M Y') }}</div>
-                                            </td>
-                                            <td>{{ $registration->location }}</td>
-                                            <td><span class="status-pill {{ $regClass[$regStatus] ?? 'status-other' }}">{{ $regLabel[$regStatus] ?? ucfirst($regStatus) }}</span></td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @endif
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="stat-card h-100">
+                <div class="stat-icon stat-icon-yellow">◷</div>
+                <div>
+                    <div class="h3 fw-bold mb-0">{{ $pendingRegistrations }}</div>
+                    <div class="small text-secondary">Menunggu Verifikasi</div>
                 </div>
-            </section>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="stat-card h-100">
+                <div class="stat-icon stat-icon-green">✓</div>
+                <div>
+                    <div class="h3 fw-bold mb-0">{{ $pendingPayments }}</div>
+                    <div class="small text-secondary">Pembayaran Menunggu</div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <section class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h2 class="h5 fw-bold mb-0">Pendaftaran Terbaru</h2>
+            <a href="{{ route('donor.registrations.index') }}" class="link-danger fw-semibold small">
+                Lihat Riwayat →
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Jadwal Donor</th>
+                        <th>Tanggal</th>
+                        <th>Status Pendaftaran</th>
+                        <th>Status Pembayaran</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($registrations as $registration)
+                        @php
+                            $registrationBadgeClass = 'text-bg-warning';
+                            $registrationStatusText = 'Menunggu';
+                            $paymentBadgeClass = 'text-bg-secondary';
+                            $paymentStatusText = 'Menunggu';
+
+                            if ($registration->registration_status === 'approved') {
+                                $registrationBadgeClass = 'text-bg-success';
+                                $registrationStatusText = 'Disetujui';
+                            } elseif ($registration->registration_status === 'rejected') {
+                                $registrationBadgeClass = 'text-bg-danger';
+                                $registrationStatusText = 'Ditolak';
+                            }
+
+                            if ($registration->payment_status === 'approved') {
+                                $paymentBadgeClass = 'text-bg-success';
+                                $paymentStatusText = 'Disetujui';
+                            } elseif ($registration->payment_status === 'rejected') {
+                                $paymentBadgeClass = 'text-bg-danger';
+                                $paymentStatusText = 'Ditolak';
+                            }
+                        @endphp
+                        <tr>
+                            <td class="fw-semibold">
+                                {{ $registration->schedule?->title ?? 'Jadwal dihapus' }}
+                            </td>
+                            <td>
+                                {{ $registration->schedule?->schedule_date?->format('d M Y') ?? '-' }}
+                            </td>
+                            <td>
+                                <span class="badge {{ $registrationBadgeClass }}">
+                                    {{ $registrationStatusText }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge {{ $paymentBadgeClass }}">
+                                    {{ $paymentStatusText }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center text-secondary py-4">
+                                Belum ada pendaftaran. Gunakan menu Layanan Donor untuk melihat jadwal yang tersedia.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="card border-0 shadow-sm mt-4">
+        <div class="card-header bg-white py-3">
+            <h2 class="h5 fw-bold mb-0">Pengumuman</h2>
+            <p class="small text-secondary mb-0">Informasi terbaru dari pengelola donor.</p>
+        </div>
+
+        <div class="card-body">
+            <div class="row g-3">
+                @forelse ($announcements as $announcement)
+                    <div class="col-md-6">
+                        <article class="announcement-card h-100">
+                            <div class="small text-danger fw-semibold">
+                                {{ $announcement->created_at->format('d M Y') }}
+                            </div>
+                            <h3 class="h6 fw-bold mt-2">{{ $announcement->title }}</h3>
+                            <p class="text-secondary mb-0">{{ $announcement->content }}</p>
+                        </article>
+                    </div>
+                @empty
+                    <div class="col-12">
+                        <p class="text-secondary mb-0">Belum ada pengumuman.</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </section>
 </div>
 @endsection

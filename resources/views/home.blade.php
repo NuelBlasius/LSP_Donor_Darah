@@ -1,103 +1,39 @@
 @extends('layouts.app')
 
-@section('title', 'Beranda - DonorDarah')
+@section('title', 'Beranda | DonorDarah')
 
 @section('content')
-<div class="home-wrap">
-    <section class="hero-section">
-        <div class="container">
-            <div class="row align-items-center g-4">
-                <div class="col-lg-6">
-                    <div class="hero-kicker mb-4"><span>♥</span> Setetes darah, harapan bagi sesama</div>
-                    <h1 class="hero-title mb-4">Ayo <span>Donor Darah,</span><br>Selamatkan Banyak Nyawa</h1>
-                    <p class="hero-copy mb-4">
-                        Bergabunglah menjadi pendonor dan bantu memenuhi kebutuhan darah bagi mereka yang membutuhkan.
-                        Mulai dari registrasi hingga memilih jadwal donor, semuanya lebih mudah secara online.
-                    </p>
-                    <div class="d-flex flex-wrap gap-3" id="pendaftaran">
-                        <a href="{{ route('register') }}" class="btn btn-blood btn-lg px-4 py-3">Daftar Donor Sekarang <span class="ms-2">›</span></a>
-                        <a href="#informasi" class="btn btn-outline-blood btn-lg px-4 py-3">Pelajari Lebih Lanjut</a>
-                    </div>
-                    <div class="d-flex align-items-center gap-3 mt-4 text-muted small">
-                        <span class="text-blood fw-bold">✓</span> Pendaftaran mudah
-                        <span class="text-blood fw-bold">✓</span> Jadwal terorganisir
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="hero-visual">
-                        <div class="visual-circle"></div>
-                        <div class="floating-note note-top"><span class="text-blood">♥</span> Donor itu berarti <small>Berbagi kehidupan</small></div>
-                        <img class="donor-illustration" src="{{ asset('images/donor-hero.svg') }}" alt="Ilustrasi seseorang sedang melakukan donor darah">
-                        <div class="floating-note note-bottom"><span class="text-blood">●</span> Jadilah pahlawan hari ini <small>Mulai dari satu langkah</small></div>
-                    </div>
-                </div>
+<section class="landing-hero rounded-4 overflow-hidden mb-4">
+    <div class="row align-items-center g-0">
+        <div class="col-lg-6 p-4 p-lg-5">
+            <span class="badge rounded-pill text-bg-danger mb-3">Setetes Darah, Harapan Baru</span>
+            <h1 class="display-5 fw-bold text-dark mb-3">Ayo <span class="text-danger">Donor Darah</span>,<br>Selamatkan Banyak Nyawa</h1>
+            <p class="lead text-secondary mb-4">Bergabunglah menjadi pendonor dan bantu memenuhi kebutuhan darah bagi mereka yang membutuhkan.</p>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{{ route('register') }}" class="btn btn-danger px-4 py-2">Daftar Donor Sekarang <span aria-hidden="true">›</span></a>
+                <a href="{{ route('services') }}" class="btn btn-outline-secondary px-4 py-2">Pelajari Layanan</a>
             </div>
         </div>
-    </section>
-
-    <section class="benefits">
-        <div class="container">
-            <div class="row g-2">
-                <div class="col-md-4">
-                    <div class="benefit-item">
-                        <div class="benefit-icon">♡</div>
-                        <div><strong>Bantu Sesama</strong><div class="small text-muted mt-1">Setiap kantong darah sangat berarti.</div></div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="benefit-item">
-                        <div class="benefit-icon">♧</div>
-                        <div><strong>Proses Aman</strong><div class="small text-muted mt-1">Dilakukan oleh tenaga medis profesional.</div></div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="benefit-item">
-                        <div class="benefit-icon">▦</div>
-                        <div><strong>Jadwal Terjadwal</strong><div class="small text-muted mt-1">Pilih waktu donor sesuai ketersediaan.</div></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
-
-<section class="py-5" id="informasi">
-    <div class="container py-lg-3">
-        <div class="text-center mb-4">
-            <div class="hero-kicker mb-3">Layanan DonorDarah</div>
-            <h2 class="section-title">Donor darah jadi lebih mudah</h2>
-            <p class="text-muted">Kelola proses donor Anda melalui satu platform.</p>
-        </div>
-        <div class="row g-4">
-            <div class="col-md-4" id="jadwal">
-                <div class="feature-card">
-                    <div class="feature-icon mb-3">▦</div>
-                    <h5 class="fw-bold">Jadwal Donor</h5>
-                    <p class="text-muted mb-0">Temukan jadwal dan lokasi kegiatan donor yang tersedia.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="feature-card">
-                    <div class="feature-icon mb-3">✓</div>
-                    <h5 class="fw-bold">Pendaftaran Terpantau</h5>
-                    <p class="text-muted mb-0">Pantau status pendaftaran dan konfirmasi melalui akun Anda.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="feature-card">
-                    <div class="feature-icon mb-3">♥</div>
-                    <h5 class="fw-bold">Riwayat Donor</h5>
-                    <p class="text-muted mb-0">Simpan informasi kegiatan donor yang pernah Anda ikuti.</p>
-                </div>
-            </div>
+        <div class="col-lg-6 hero-illustration">
+            <img src="{{ asset('images/donor-illustration.svg') }}" class="img-fluid" alt="Ilustrasi pendonor sedang mendonorkan darah">
         </div>
     </div>
 </section>
 
-<footer class="site-footer">
-    <div class="container d-flex flex-wrap justify-content-between gap-2">
-        <span class="fw-bold text-dark">DonorDarah</span>
-        <span>Berbagi darah, berbagi harapan.</span>
+<section class="feature-strip rounded-4 bg-white shadow-sm p-3 p-lg-4 mb-5">
+    <div class="row g-3">
+        <div class="col-md-4"><div class="d-flex align-items-center gap-3 h-100 feature-item"><span class="feature-icon">♡</span><div><h2 class="h6 fw-bold mb-1">Bantu Sesama</h2><p class="small text-secondary mb-0">Setiap kantong darah sangat berarti.</p></div></div></div>
+        <div class="col-md-4"><div class="d-flex align-items-center gap-3 h-100 feature-item"><span class="feature-icon">♧</span><div><h2 class="h6 fw-bold mb-1">Proses Terverifikasi</h2><p class="small text-secondary mb-0">Akun dan pendaftaran diperiksa admin.</p></div></div></div>
+        <div class="col-md-4"><div class="d-flex align-items-center gap-3 h-100 feature-item"><span class="feature-icon">▦</span><div><h2 class="h6 fw-bold mb-1">Jadwal Teratur</h2><p class="small text-secondary mb-0">Pilih jadwal sesuai ketersediaan.</p></div></div></div>
     </div>
-</footer>
+</section>
+
+<section id="informasi" class="mb-5">
+    <div class="text-center mb-4"><h2 class="h2 fw-bold">Donor Darah, Mulai dari Sini</h2><p class="text-secondary">Daftar akun, verifikasi, lalu pilih jadwal donor yang tersedia.</p></div>
+    <div class="row justify-content-center g-3">
+        <div class="col-md-4"><div class="card border-0 shadow-sm h-100"><div class="card-body p-4"><span class="badge text-bg-danger mb-3">01</span><h3 class="h5 fw-bold">Buat Akun</h3><p class="text-secondary mb-0">Isi data diri dan nomor telepon untuk membuat akun pendonor.</p></div></div></div>
+        <div class="col-md-4"><div class="card border-0 shadow-sm h-100"><div class="card-body p-4"><span class="badge text-bg-danger mb-3">02</span><h3 class="h5 fw-bold">Verifikasi Akun</h3><p class="text-secondary mb-0">Tunggu pemeriksaan akun oleh pengelola sebelum mendaftar jadwal.</p></div></div></div>
+        <div class="col-md-4"><div class="card border-0 shadow-sm h-100"><div class="card-body p-4"><span class="badge text-bg-danger mb-3">03</span><h3 class="h5 fw-bold">Pilih Jadwal</h3><p class="text-secondary mb-0">Lihat layanan, daftar kegiatan, dan pantau status pendaftaran.</p></div></div></div>
+    </div>
+</section>
 @endsection
