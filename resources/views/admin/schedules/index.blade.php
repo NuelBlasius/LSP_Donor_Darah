@@ -10,7 +10,7 @@
 <div class="card border-0 shadow-sm">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
-            <thead class="table-light"><tr><th>Nama Jadwal</th><th>Tanggal</th><th>Lokasi</th><th>Kuota</th><th>Status</th><th>Tindakan</th></tr></thead>
+            <thead class="table-light"><tr><th>Nama Jadwal</th><th>Tanggal</th><th>Lokasi</th><th>Kuota</th><th>Nominal</th><th>Status</th><th>Tindakan</th></tr></thead>
             <tbody>
             @forelse ($schedules as $schedule)
                 @php
@@ -24,7 +24,7 @@
                 @endphp
                 <tr>
                     <td class="fw-semibold">{{ $schedule->title }}</td><td>{{ $schedule->schedule_date->format('d M Y') }}<div class="small text-secondary">{{ substr($schedule->start_time,0,5) }}–{{ substr($schedule->end_time,0,5) }}</div></td>
-                    <td>{{ $schedule->location }}</td><td>{{ $schedule->quota }}</td>
+                    <td>{{ $schedule->location }}</td><td>{{ $schedule->quota }}</td><td>Rp {{ number_format((int) $schedule->amount, 0, ',', '.') }}</td>
 <td>
                         <span class="badge {{ $scheduleBadgeClass }}">
                             {{ $scheduleStatusText }}
@@ -38,7 +38,7 @@
                     </div></td>
                 </tr>
             @empty
-                <tr><td colspan="6" class="text-center text-secondary py-4">Belum ada jadwal. Klik Tambah Jadwal untuk membuat jadwal donor.</td></tr>
+                <tr><td colspan="7" class="text-center text-secondary py-4">Belum ada jadwal. Klik Tambah Jadwal untuk membuat jadwal donor.</td></tr>
             @endforelse
             </tbody>
         </table>

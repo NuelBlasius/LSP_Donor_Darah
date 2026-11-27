@@ -69,6 +69,7 @@
                                 {{ $paymentStatusText }}
                             </span>
                         </td>
+                        <td class="fw-semibold">Rp {{ number_format((int) ($registration->schedule?->amount ?? 0), 0, ',', '.') }}</td>
                         <td>
                             @if ($registration->registration_status === 'approved' && $registration->payment_status !== 'approved')
                                 <a
@@ -88,7 +89,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="text-center text-secondary py-4">
+                        <td colspan="6" class="text-center text-secondary py-4">
                             Belum ada riwayat pendaftaran.
                         </td>
                     </tr>

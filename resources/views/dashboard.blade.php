@@ -101,6 +101,25 @@
         </div>
     </div>
 
+    <section class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+            <h2 class="h5 fw-bold mb-0">Notifikasi</h2>
+        </div>
+        <div class="card-body">
+            @forelse ($notifications as $notification)
+                <article class="notification-item">
+                    <div class="d-flex justify-content-between flex-wrap gap-2">
+                        <h3 class="h6 fw-bold mb-1">{{ $notification->title }}</h3>
+                        <span class="small text-secondary">{{ $notification->created_at->format('d M Y, H:i') }}</span>
+                    </div>
+                    <p class="text-secondary mb-0">{{ $notification->message }}</p>
+                </article>
+            @empty
+                <p class="text-secondary mb-0">Belum ada notifikasi. Informasi status pendaftaran akan muncul di sini.</p>
+            @endforelse
+        </div>
+    </section>
+
     <section class="card border-0 shadow-sm">
         <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
             <h2 class="h5 fw-bold mb-0">Pendaftaran Terbaru</h2>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DonorRegistration;
 use App\Models\DonorSchedule;
+use App\Models\DonorNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -125,6 +126,22 @@ class DonorRegistrationController extends Controller
                 ->with('error', 'Pembayaran dapat dikonfirmasi setelah pendaftaran disetujui admin.');
         }
 
+        if ($registration->payment_status === 'approved') {
+            return redirect()->route('donor.registrations.index')
+                ->with('success', 'Pembayaran Anda sudah diverifikasi admin.');
+        }
+
+        if ($registration->payment_proof && $registration->payment_status === 'pending') {
+            return redirect()->route('donor.registrations.index')
+                ->with('success', 'Bukti pembayaran sedang menunggu verifikasi admin.');
+        }
+
+        if (!$registration->payment_expires_at || $registration->payment_expires_at->isPast()) {
+            $registration->payment_reference = '880' . str_pad((string) $registration->id, 10, '0', STR_PAD_LEFT);
+            $registration->payment_expires_at = now()->addMinutes(15);
+            $registration->save();
+        }
+
         return view('donor.registrations.payment', compact('registration'));
     }
 
@@ -138,14 +155,28 @@ class DonorRegistrationController extends Controller
         }
 
         $data = $request->validate([
-            'payment_proof' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:3072'],
+            'payment_method' => ['required', 'in:virtual_account,qris'],
+            'payment_proof' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ]);
+
+        if (!$registration->payment_expires_at || $registration->payment_expires_at->isPast()) {
+            return back()->with('error', 'Kode pembayaran telah kedaluwarsa. Muat ulang halaman untuk membuat kode baru.');
+        }
+
+        if ($registration->payment_status === 'approved') {
+            return back()->with('error', 'Pembayaran sudah diverifikasi admin.');
+        }
+
+        if ($registration->payment_proof && $registration->payment_status === 'pending') {
+            return back()->with('error', 'Bukti pembayaran sedang menunggu verifikasi admin.');
+        }
 
         if ($registration->payment_proof) {
             Storage::disk('public')->delete($registration->payment_proof);
         }
 
         $registration->payment_proof = $data['payment_proof']->store('payment-proofs', 'public');
+        $registration->payment_method = $data['payment_method'];
         $registration->payment_status = 'pending';
         $registration->save();
 
@@ -157,7 +188,23 @@ class DonorRegistrationController extends Controller
     {
         $this->authorizeAdmin();
 
-        $registrations = DonorRegistration::with(['user', 'schedule'])->latest()->paginate(10);
+        $query = DonorRegistration::with(['user', 'schedule']);
+
+        if (request()->filled('search')) {
+            $search = trim(request('search'));
+            $query->whereHas('user', function ($userQuery) use ($search) {
+                $userQuery->where('name', 'like', '%' . $search . '%');
+            });
+        }
+
+        if (request()->filled('date')) {
+            $date = request('date');
+            $query->whereHas('user', function ($userQuery) use ($date) {
+                $userQuery->whereDate('created_at', $date);
+            });
+        }
+
+        $registrations = $query->latest()->paginate(10)->withQueryString();
 
         return view('admin.registrations.index', compact('registrations'));
     }
@@ -173,19 +220,17 @@ class DonorRegistrationController extends Controller
         $registration->registration_status = $data['registration_status'];
         $registration->save();
 
+        $message = $data['registration_status'] === 'approved'
+            ? 'Pendaftaran jadwal ' . ($registration->schedule?->title ?? '') . ' disetujui. Silakan lanjutkan pembayaran.'
+            : 'Pendaftaran jadwal ' . ($registration->schedule?->title ?? '') . ' ditolak.';
+
+        DonorNotification::create([
+            'user_id' => $registration->user_id,
+            'title' => $data['registration_status'] === 'approved' ? 'Pendaftaran disetujui' : 'Pendaftaran ditolak',
+            'message' => $message,
+        ]);
+
         return back()->with('success', 'Status pendaftaran berhasil diperbarui.');
-    }
-
-    public function adminPayments()
-    {
-        $this->authorizeAdmin();
-
-        $payments = DonorRegistration::with(['user', 'schedule'])
-            ->whereNotNull('payment_proof')
-            ->latest()
-            ->paginate(10);
-
-        return view('admin.payments.index', compact('payments'));
     }
 
     public function adminUpdatePayment(Request $request, DonorRegistration $registration)
@@ -198,7 +243,25 @@ class DonorRegistrationController extends Controller
         ]);
 
         $registration->payment_status = $data['payment_status'];
+
+        if ($data['payment_status'] === 'approved') {
+            $registration->registration_status = 'approved';
+        }
+
         $registration->save();
+
+        $notificationTitle = 'Status pembayaran diperbarui';
+        $notificationMessage = 'Pembayaran pendaftaran ' . ($registration->schedule?->title ?? '') . ' telah ditolak. Silakan periksa bukti pembayaran dan kirim ulang.';
+        if ($data['payment_status'] === 'approved') {
+            $notificationTitle = 'Pendaftaran donor telah dikonfirmasi';
+            $notificationMessage = 'Pembayaran Anda telah diverifikasi. Pendaftaran donor ' . ($registration->schedule?->title ?? '') . ' resmi terdaftar.';
+        }
+
+        DonorNotification::create([
+            'user_id' => $registration->user_id,
+            'title' => $notificationTitle,
+            'message' => $notificationMessage,
+        ]);
 
         return back()->with('success', 'Status pembayaran berhasil diperbarui.');
     }

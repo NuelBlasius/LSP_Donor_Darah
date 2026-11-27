@@ -9,7 +9,7 @@ class DonorSchedule extends Model
 {
     protected $fillable = [
         'title', 'location', 'schedule_date', 'start_time',
-        'end_time', 'quota', 'status',
+        'end_time', 'quota', 'status', 'amount',
     ];
 
     protected function casts(): array

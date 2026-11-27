@@ -57,10 +57,11 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::patch('/akun/{user}/status', [AdminController::class, 'updateAccountStatus'])->name('accounts.status');
 
     Route::get('/pendaftaran', [DonorRegistrationController::class, 'adminIndex'])->name('registrations.index');
+    // Backward-compatible redirect for stale links; payments are handled in registrations.
+    Route::get('/payments', function () { return redirect()->route('admin.registrations.index'); })->name('payments.index');
     Route::patch('/pendaftaran/{registration}/status', [DonorRegistrationController::class, 'adminUpdateStatus'])->name('registrations.status');
 
-    Route::get('/pembayaran', [DonorRegistrationController::class, 'adminPayments'])->name('payments.index');
-    Route::patch('/pembayaran/{registration}/status', [DonorRegistrationController::class, 'adminUpdatePayment'])->name('payments.status');
+    Route::patch('/pendaftaran/{registration}/pembayaran', [DonorRegistrationController::class, 'adminUpdatePayment'])->name('payments.status');
 
     Route::get('/jadwal', [ScheduleAdminController::class, 'index'])->name('schedules.index');
     Route::get('/jadwal/create', [ScheduleAdminController::class, 'create'])->name('schedules.create');

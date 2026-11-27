@@ -35,8 +35,23 @@
                         <div class="col-md-4"><label class="form-label" for="end_time">Jam Selesai</label><input id="end_time" type="time" name="end_time" class="form-control" value="{{ old('end_time', substr($schedule->end_time ?? '',0,5)) }}" required></div>
                     </div>
                     <div class="row g-3 mt-1">
-                        <div class="col-md-6"><label class="form-label" for="quota">Kuota Pendonor</label><input id="quota" type="number" min="1" name="quota" class="form-control" value="{{ old('quota', $schedule->quota ?? 50) }}" required></div>
-                        <div class="col-md-6"><label class="form-label" for="status">Status</label><select id="status" name="status" class="form-select" required><option value="open" @selected(old('status', $schedule->status ?? 'open') === 'open')>Dibuka</option><option value="closed" @selected(old('status', $schedule->status ?? 'open') === 'closed')>Ditutup</option></select></div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="quota">Kuota Pendonor</label>
+                            <input id="quota" type="number" min="1" name="quota" class="form-control" value="{{ old('quota', $schedule->quota ?? 50) }}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="amount_display">Nominal Pembayaran (Rp)</label>
+                            <input id="amount_display" type="text" inputmode="numeric" class="form-control rupiah-format" value="{{ old('amount', number_format((int) ($schedule->amount ?? 0), 0, ',', '.')) }}" required>
+                            <input id="amount" type="hidden" name="amount" value="{{ old('amount', $schedule->amount ?? 0) }}">
+                            <div class="form-text">Masukkan angka saja, pemisah ribuan ditambahkan otomatis.</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="status">Status</label>
+                            <select id="status" name="status" class="form-select" required>
+                                <option value="open" @selected(old('status', $schedule->status ?? 'open') === 'open')>Dibuka</option>
+                                <option value="closed" @selected(old('status', $schedule->status ?? 'open') === 'closed')>Ditutup</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="mt-4 d-flex flex-wrap gap-3"><button class="btn btn-danger px-4">{{ $submitText }}</button><a href="{{ route('admin.schedules.index') }}" class="btn btn-outline-secondary px-4">Batal</a></div>
                 </form>

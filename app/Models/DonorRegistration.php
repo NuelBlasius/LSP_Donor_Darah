@@ -9,8 +9,15 @@ class DonorRegistration extends Model
 {
     protected $fillable = [
         'user_id', 'donor_schedule_id', 'registration_status',
-        'payment_status', 'payment_proof',
+        'payment_status', 'payment_proof', 'payment_method', 'payment_reference', 'payment_expires_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'payment_expires_at' => 'datetime',
+        ];
+    }
 
     public function user(): BelongsTo
     {

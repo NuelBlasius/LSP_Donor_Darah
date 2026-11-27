@@ -114,9 +114,6 @@
                 <a @class(['sidebar-link', 'active' => request()->routeIs('admin.registrations.*')]) href="{{ route('admin.registrations.index') }}">
                     <span>☷</span> Pendaftaran
                 </a>
-                <a @class(['sidebar-link', 'active' => request()->routeIs('admin.payments.*')]) href="{{ route('admin.payments.index') }}">
-                    <span>▤</span> Pembayaran
-                </a>
                 <a @class(['sidebar-link', 'active' => request()->routeIs('admin.announcements.*')]) href="{{ route('admin.announcements.index') }}">
                     <span>▧</span> Pengumuman
                 </a>
@@ -209,7 +206,6 @@
                         <a @class(['sidebar-link', 'active' => request()->routeIs('admin.accounts.*')]) href="{{ route('admin.accounts.index') }}">♙ Verifikasi Akun</a>
                         <a @class(['sidebar-link', 'active' => request()->routeIs('admin.schedules.*')]) href="{{ route('admin.schedules.index') }}">▣ Jadwal Donor</a>
                         <a @class(['sidebar-link', 'active' => request()->routeIs('admin.registrations.*')]) href="{{ route('admin.registrations.index') }}">☷ Pendaftaran</a>
-                        <a @class(['sidebar-link', 'active' => request()->routeIs('admin.payments.*')]) href="{{ route('admin.payments.index') }}">▤ Pembayaran</a>
                         <a @class(['sidebar-link', 'active' => request()->routeIs('admin.announcements.*')]) href="{{ route('admin.announcements.index') }}">▧ Pengumuman</a>
                     @else
                         <a @class(['sidebar-link', 'active' => request()->routeIs('dashboard')]) href="{{ route('dashboard') }}">▦ Dashboard</a>

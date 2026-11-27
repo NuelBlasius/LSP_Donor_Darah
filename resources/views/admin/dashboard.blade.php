@@ -23,7 +23,7 @@
             </a>
         </div>
         <div class="col-sm-6 col-xl-3">
-            <a href="{{ route('admin.payments.index') }}" class="admin-stat-card text-decoration-none h-100">
+            <a href="{{ route('admin.registrations.index') }}" class="admin-stat-card text-decoration-none h-100">
                 <div class="stat-icon stat-icon-green">▤</div><div class="small text-secondary">Pembayaran Menunggu</div><div class="h2 fw-bold text-dark my-2">{{ $stats['pending_payments'] }}</div><span class="link-danger small fw-semibold">Periksa bukti →</span>
             </a>
         </div>

@@ -58,6 +58,9 @@ class ScheduleAdminController extends Controller
 
     private function validated(Request $request): array
     {
+        $amount = preg_replace('/[^0-9]/', '', (string) $request->input('amount', '0'));
+        $request->merge(['amount' => $amount === '' ? 0 : (int) $amount]);
+
         return $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'location' => ['required', 'string', 'max:255'],
@@ -65,6 +68,7 @@ class ScheduleAdminController extends Controller
             'start_time' => ['required', 'date_format:H:i'],
             'end_time' => ['required', 'date_format:H:i', 'after:start_time'],
             'quota' => ['required', 'integer', 'min:1'],
+            'amount' => ['required', 'integer', 'min:0'],
             'status' => ['required', 'in:open,closed'],
         ]);
     }

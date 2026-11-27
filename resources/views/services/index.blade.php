@@ -29,7 +29,8 @@
                     <h2 class="h5 fw-bold mt-3">{{ $schedule->title }}</h2>
                     <p class="text-secondary mb-2">📍 {{ $schedule->location }}</p>
                     <p class="text-secondary mb-2">📅 {{ $schedule->schedule_date->format('d M Y') }}</p>
-                    <p class="text-secondary mb-3">🕒 {{ substr($schedule->start_time, 0, 5) }}–{{ substr($schedule->end_time, 0, 5) }}</p>
+                    <p class="text-secondary mb-2">🕒 {{ substr($schedule->start_time, 0, 5) }}–{{ substr($schedule->end_time, 0, 5) }}</p>
+                    <p class="fw-bold text-danger mb-3">Rp {{ number_format((int) $schedule->amount, 0, ',', '.') }}</p>
 
                     @if ($remaining < 1)
                         <button class="btn btn-secondary w-100" disabled>Kuota Penuh</button>

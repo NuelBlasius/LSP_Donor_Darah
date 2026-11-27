@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Announcement;
+use App\Models\DonorNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -92,10 +93,11 @@ class AuthController extends Controller
             ->where('payment_status', 'pending')
             ->count();
         $announcements = Announcement::latest()->take(4)->get();
+        $notifications = DonorNotification::where('user_id', $user->id)->latest()->take(5)->get();
 
         return view('dashboard', compact(
             'user', 'registrations', 'totalRegistrations',
-            'pendingRegistrations', 'pendingPayments', 'announcements'
+            'pendingRegistrations', 'pendingPayments', 'announcements', 'notifications'
         ));
     }
 

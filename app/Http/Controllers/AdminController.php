@@ -23,6 +23,7 @@ class AdminController extends Controller
             'pending_accounts' => User::where('role', 'donor')->where('account_status', 'pending')->count(),
             'pending_registrations' => DonorRegistration::where('registration_status', 'pending')->count(),
             'pending_payments' => DonorRegistration::whereNotNull('payment_proof')->where('payment_status', 'pending')->count(),
+            'pending_work' => DonorRegistration::where('registration_status', 'pending')->count() + DonorRegistration::whereNotNull('payment_proof')->where('payment_status', 'pending')->count(),
             'open_schedules' => DonorSchedule::where('status', 'open')->whereDate('schedule_date', '>=', today())->count(),
             'announcements' => Announcement::count(),
         ];
@@ -34,7 +35,17 @@ class AdminController extends Controller
     {
         $this->authorizeAdmin();
 
-        $users = User::where('role', 'donor')->latest()->paginate(10);
+        $userQuery = User::where('role', 'donor');
+
+        if (request()->filled('search')) {
+            $userQuery->where('name', 'like', '%' . trim(request('search')) . '%');
+        }
+
+        if (request()->filled('date')) {
+            $userQuery->whereDate('created_at', request('date'));
+        }
+
+        $users = $userQuery->latest()->paginate(10)->withQueryString();
 
         return view('admin.accounts.index', compact('users'));
     }

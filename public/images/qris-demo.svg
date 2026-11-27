@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+<rect width="240" height="240" rx="12" fill="#fff"/>
+<rect x="10" y="10" width="220" height="220" rx="8" fill="none" stroke="#111827" stroke-width="3"/>
+<g fill="#111827">
+<path d="M25 25h60v60H25z M37 37v36h36V37z M48 48h14v14H48z"/>
+<path d="M155 25h60v60h-60z M167 37v36h36V37z M178 48h14v14h-14z"/>
+<path d="M25 155h60v60H25z M37 167v36h36v-36z M48 178h14v14H48z"/>
+<path d="M100 25h12v12h-12z M124 25h12v24h-12z M100 49h24v12h-24z M136 61h12v12h-12z M100 73h12v24h-12z M124 85h24v12h-24z"/>
+<path d="M97 112h12v12H97z M121 112h12v24h-12z M145 100h12v12h-12z M169 100h12v12h-12z M193 100h12v24h-12z"/>
+<path d="M97 136h24v12H97z M133 148h12v12h-12z M157 124h12v24h-12z M181 136h24v12h-24z M97 160h12v24h-12z M121 172h24v12h-24z M157 184h12v24h-12z M181 160h12v12h-12z M205 184h10v24h-10z"/>
+</g>
+<rect x="54" y="101" width="132" height="38" rx="8" fill="#c91f2d"/>
+<text x="120" y="125" font-family="Arial,sans-serif" font-size="16" font-weight="700" text-anchor="middle" fill="#fff">QRIS DEMO</text>
+</svg>
