@@ -22,7 +22,7 @@
         <nav class="navbar navbar-expand-lg public-navbar bg-white border-bottom sticky-top">
             <div class="container">
                 <a class="navbar-brand fw-bold text-danger d-flex align-items-center gap-2" href="{{ route('home') }}">
-                    <span class="brand-drop">✚</span>
+                    <img src="{{ asset('images/logo-donor.png') }}" class="site-logo" alt="Logo DonorDarah" width="36" height="36">
                     DonorDarah
                 </a>
 
@@ -39,27 +39,30 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="publicNavbar">
-                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0" data-section-nav>
                         <li class="nav-item">
                             <a
-                                @class(['nav-link', 'active' => request()->routeIs('home')])
-                                href="{{ route('home') }}"
+                                class="nav-link active"
+                                data-section-link="beranda"
+                                href="{{ route('home') }}#beranda"
                             >
                                 Beranda
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('home') }}#informasi">
+                            <a class="nav-link" data-section-link="informasi" href="{{ route('home') }}#informasi">
                                 Informasi
                             </a>
                         </li>
                         <li class="nav-item">
                             <a
-                                @class(['nav-link', 'active' => request()->routeIs('services')])
-                                href="{{ route('services') }}"
+                                class="nav-link"
+                                data-section-link="layanan"
+                                href="{{ route('home') }}#layanan"
                             >
                                 Layanan
                             </a>
+                            <span class="nav-indicator" aria-hidden="true"></span>
                         </li>
                     </ul>
 
@@ -76,7 +79,7 @@
         </nav>
     @endif
 
-    <main class="{{ $guestMainClass }}">
+    <main class="{{ $guestMainClass }} page-transition">
 @else
     @php
         $isAdmin = auth()->user()->role === 'admin';
@@ -95,7 +98,7 @@
     <div class="app-shell">
         <aside class="app-sidebar d-none d-lg-flex flex-column">
             <a class="sidebar-brand text-white text-decoration-none" href="{{ $appHome }}">
-                <span class="brand-drop brand-drop-light">✚</span>
+                <img src="{{ asset('images/logo-donor.png') }}" class="site-logo site-logo-sidebar" alt="Logo DonorDarah" width="36" height="36">
                 DonorDarah
             </a>
 
@@ -112,7 +115,7 @@
                     <span>▣</span> Jadwal Donor
                 </a>
                 <a @class(['sidebar-link', 'active' => request()->routeIs('admin.registrations.*')]) href="{{ route('admin.registrations.index') }}">
-                    <span>☷</span> Pendaftaran
+                    <span>☷</span> Verifikasi Pendaftaran
                 </a>
                 <a @class(['sidebar-link', 'active' => request()->routeIs('admin.announcements.*')]) href="{{ route('admin.announcements.index') }}">
                     <span>▧</span> Pengumuman
@@ -189,7 +192,7 @@
             >
                 <div class="offcanvas-header app-sidebar-mobile-head">
                     <h2 class="offcanvas-title h5 fw-bold text-white" id="mobileSidebarLabel">
-                        <span class="brand-drop brand-drop-light">✚</span>
+                        <img src="{{ asset('images/logo-donor.png') }}" class="site-logo site-logo-sidebar" alt="Logo DonorDarah" width="36" height="36">
                         DonorDarah
                     </h2>
                     <button
@@ -205,7 +208,7 @@
                         <a @class(['sidebar-link', 'active' => request()->routeIs('admin.dashboard')]) href="{{ route('admin.dashboard') }}">▦ Dashboard</a>
                         <a @class(['sidebar-link', 'active' => request()->routeIs('admin.accounts.*')]) href="{{ route('admin.accounts.index') }}">♙ Verifikasi Akun</a>
                         <a @class(['sidebar-link', 'active' => request()->routeIs('admin.schedules.*')]) href="{{ route('admin.schedules.index') }}">▣ Jadwal Donor</a>
-                        <a @class(['sidebar-link', 'active' => request()->routeIs('admin.registrations.*')]) href="{{ route('admin.registrations.index') }}">☷ Pendaftaran</a>
+                        <a @class(['sidebar-link', 'active' => request()->routeIs('admin.registrations.*')]) href="{{ route('admin.registrations.index') }}">☷ Verifikasi Pendaftaran</a>
                         <a @class(['sidebar-link', 'active' => request()->routeIs('admin.announcements.*')]) href="{{ route('admin.announcements.index') }}">▧ Pengumuman</a>
                     @else
                         <a @class(['sidebar-link', 'active' => request()->routeIs('dashboard')]) href="{{ route('dashboard') }}">▦ Dashboard</a>
@@ -226,7 +229,7 @@
                 </div>
             </div>
 
-            <main class="app-content">
+            <main class="app-content page-transition">
 @endif
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">

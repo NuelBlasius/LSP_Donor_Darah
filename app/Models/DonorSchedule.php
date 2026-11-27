@@ -19,6 +19,41 @@ class DonorSchedule extends Model
         ];
     }
 
+    public function getMapAddressAttribute(): string
+    {
+        $location = trim((string) $this->location);
+
+        if (! filter_var($location, FILTER_VALIDATE_URL)) {
+            return $location;
+        }
+
+        $query = [];
+        parse_str((string) parse_url($location, PHP_URL_QUERY), $query);
+
+        foreach (['query', 'q', 'destination', 'daddr'] as $key) {
+            if (! empty($query[$key]) && is_string($query[$key])) {
+                return trim($query[$key]);
+            }
+        }
+
+        $path = (string) parse_url($location, PHP_URL_PATH);
+
+        if (preg_match('~/(?:maps/)?(?:place|search)/([^/?]+)~i', $path, $matches)) {
+            $address = urldecode($matches[1]);
+
+            return trim(str_replace('_', ' ', $address));
+        }
+
+        return 'Lihat lokasi di Google Maps';
+    }
+
+    public function getMapUrlAttribute(): ?string
+    {
+        return filter_var($this->location, FILTER_VALIDATE_URL)
+            ? $this->location
+            : null;
+    }
+
     public function registrations(): HasMany
     {
         return $this->hasMany(DonorRegistration::class);

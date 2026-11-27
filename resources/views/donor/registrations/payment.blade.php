@@ -22,7 +22,16 @@
                     <hr>
                     <div class="row g-2 small">
                         <div class="col-sm-6"><span class="text-secondary">Jadwal</span><div class="fw-semibold">{{ $registration->schedule?->title ?? '-' }}</div></div>
-                        <div class="col-sm-6"><span class="text-secondary">Lokasi</span><div class="fw-semibold">{{ $registration->schedule?->location ?? '-' }}</div></div>
+                        <div class="col-sm-6">
+                            <span class="text-secondary">Lokasi</span>
+                            <div class="fw-semibold">
+                                @if ($registration->schedule?->map_url)
+                                    <a class="map-location" href="{{ $registration->schedule->map_url }}" target="_blank" rel="noopener noreferrer">{{ $registration->schedule->map_address }}</a>
+                                @else
+                                    {{ $registration->schedule?->map_address ?? '-' }}
+                                @endif
+                            </div>
+                        </div>
                         <div class="col-sm-6"><span class="text-secondary">Tanggal</span><div class="fw-semibold">{{ $registration->schedule?->schedule_date?->format('d M Y') ?? '-' }}</div></div>
                         <div class="col-sm-6"><span class="text-secondary">Kode pendaftaran</span><div class="fw-semibold">REG-{{ str_pad((string) $registration->id, 5, '0', STR_PAD_LEFT) }}</div></div>
                     </div>

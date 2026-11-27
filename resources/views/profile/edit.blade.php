@@ -9,7 +9,7 @@
 
     {{-- Header halaman --}}
     <div class="row justify-content-center">
-        <div class="col-xl-9">
+        <div class="col-xl-11">
 
             <div class="mb-4">
                 <h1 class="h2 fw-bold">Data Profil Pendonor</h1>

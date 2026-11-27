@@ -27,7 +27,6 @@
                         <div class="col-md-4"><label class="form-label">Usia</label><input class="form-control" value="{{ $user->tanggal_lahir->age }} tahun" readonly></div>
                         <div class="col-md-8"><label class="form-label">Alamat</label><textarea class="form-control" rows="2" readonly>{{ $user->alamat }}</textarea></div>
                     </div>
-                    <div class="alert alert-info mt-4 mb-0 small">Usia dihitung otomatis dari tanggal lahir yang tersimpan pada akun. Jika ada data yang salah, perbarui data profil sebelum mendaftar.</div>
                 </div>
             </div>
         </div>
@@ -37,7 +36,14 @@
                 <div class="card-body p-4 d-flex flex-column">
                     <span class="badge text-bg-success align-self-start mb-3">{{ $scheduleStatusText }}</span>
                     <h3 class="h5 fw-bold">{{ $schedule->title }}</h3>
-                    <p class="text-secondary mb-2">📍 {{ $schedule->location }}</p>
+                    <p class="text-secondary mb-2">
+                        <span aria-hidden="true">📍</span>
+                        @if ($schedule->map_url)
+                            <a class="map-location" href="{{ $schedule->map_url }}" target="_blank" rel="noopener noreferrer">{{ $schedule->map_address }}</a>
+                        @else
+                            {{ $schedule->map_address }}
+                        @endif
+                    </p>
                     <p class="text-secondary mb-2">📅 {{ $schedule->schedule_date->format('d M Y') }}</p>
                     <p class="text-secondary mb-4">🕒 {{ substr($schedule->start_time, 0, 5) }}–{{ substr($schedule->end_time, 0, 5) }}</p>
                     <div class="mt-auto">

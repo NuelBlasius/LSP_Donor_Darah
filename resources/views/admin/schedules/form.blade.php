@@ -28,7 +28,13 @@
                     @csrf
                     @if ($schedule->exists) @method('PUT') @endif
                     <div class="mb-3"><label class="form-label" for="title">Nama Jadwal</label><input id="title" name="title" class="form-control" value="{{ old('title', $schedule->title) }}" required></div>
-                    <div class="mb-3"><label class="form-label" for="location">Lokasi</label><input id="location" name="location" class="form-control" value="{{ old('location', $schedule->location) }}" required></div>
+                    <div class="mb-3">
+                        <label class="form-label" for="location">Link Google Maps</label>
+                        <input id="location" name="location" type="url" class="form-control @error('location') is-invalid @enderror" value="{{ old('location', $schedule->location) }}" placeholder="https://www.google.com/maps/place/..." maxlength="2048" required>
+                        @error('location')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                     <div class="row g-3">
                         <div class="col-md-4"><label class="form-label" for="schedule_date">Tanggal</label><input id="schedule_date" type="date" name="schedule_date" class="form-control" value="{{ old('schedule_date', $schedule->schedule_date?->format('Y-m-d')) }}" required></div>
                         <div class="col-md-4"><label class="form-label" for="start_time">Jam Mulai</label><input id="start_time" type="time" name="start_time" class="form-control" value="{{ old('start_time', substr($schedule->start_time ?? '',0,5)) }}" required></div>
@@ -43,7 +49,6 @@
                             <label class="form-label" for="amount_display">Nominal Pembayaran (Rp)</label>
                             <input id="amount_display" type="text" inputmode="numeric" class="form-control rupiah-format" value="{{ old('amount', number_format((int) ($schedule->amount ?? 0), 0, ',', '.')) }}" required>
                             <input id="amount" type="hidden" name="amount" value="{{ old('amount', $schedule->amount ?? 0) }}">
-                            <div class="form-text">Masukkan angka saja, pemisah ribuan ditambahkan otomatis.</div>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label" for="status">Status</label>

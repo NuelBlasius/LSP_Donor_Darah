@@ -18,12 +18,12 @@
             </a>
         </div>
         <div class="col-sm-6 col-xl-3">
-            <a href="{{ route('admin.registrations.index') }}" class="admin-stat-card text-decoration-none h-100">
+            <a href="{{ route('admin.registrations.index', ['tab' => 'registrations']) }}" class="admin-stat-card text-decoration-none h-100">
                 <div class="stat-icon stat-icon-yellow">▣</div><div class="small text-secondary">Pendaftaran Menunggu</div><div class="h2 fw-bold text-dark my-2">{{ $stats['pending_registrations'] }}</div><span class="link-danger small fw-semibold">Verifikasi →</span>
             </a>
         </div>
         <div class="col-sm-6 col-xl-3">
-            <a href="{{ route('admin.registrations.index') }}" class="admin-stat-card text-decoration-none h-100">
+            <a href="{{ route('admin.registrations.index', ['tab' => 'payments']) }}" class="admin-stat-card text-decoration-none h-100">
                 <div class="stat-icon stat-icon-green">▤</div><div class="small text-secondary">Pembayaran Menunggu</div><div class="h2 fw-bold text-dark my-2">{{ $stats['pending_payments'] }}</div><span class="link-danger small fw-semibold">Periksa bukti →</span>
             </a>
         </div>

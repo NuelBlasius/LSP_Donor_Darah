@@ -28,9 +28,9 @@ class ProfileController extends Controller
         $user = $request->user();
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'nomor_telepon' => ['required', 'string', 'max:20'],
-            'nik' => ['required', 'digits:16', 'unique:users,nik,' . $user->id],
+            'nik' => ['required', 'digits:16', 'unique:users,nik,'.$user->id],
             'jenis_kelamin' => ['required', 'in:Laki-laki,Perempuan'],
             'golongan_darah' => ['required', 'in:A+,A-,B+,B-,AB+,AB-,O+,O-'],
             'tanggal_lahir' => ['required', 'date', 'before:today'],

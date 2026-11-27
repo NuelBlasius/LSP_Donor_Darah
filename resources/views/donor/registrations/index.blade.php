@@ -13,6 +13,23 @@
     </a>
 </div>
 
+<form method="GET" action="{{ route('donor.registrations.index') }}" class="card border-0 shadow-sm p-3 mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-6">
+            <label for="search" class="form-label">Nama jadwal</label>
+            <input id="search" name="search" class="form-control" value="{{ request('search') }}" placeholder="Cari nama jadwal donor">
+        </div>
+        <div class="col-md-4">
+            <label for="date" class="form-label">Tanggal donor</label>
+            <input id="date" type="date" name="date" class="form-control" value="{{ request('date') }}">
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button class="btn btn-danger flex-grow-1" type="submit">Cari</button>
+            <a class="btn btn-outline-secondary" href="{{ route('donor.registrations.index') }}">Reset</a>
+        </div>
+    </div>
+</form>
+
 <div class="card border-0 shadow-sm">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
@@ -22,6 +39,7 @@
                     <th>Tanggal</th>
                     <th>Status Pendaftaran</th>
                     <th>Status Pembayaran</th>
+                    <th>Nominal</th>
                     <th>Tindakan</th>
                 </tr>
             </thead>
@@ -53,7 +71,11 @@
                         <td>
                             {{ $registration->schedule?->title ?? 'Jadwal dihapus' }}
                             <div class="small text-secondary">
-                                {{ $registration->schedule?->location }}
+                                @if ($registration->schedule?->map_url)
+                                    <a class="map-location" href="{{ $registration->schedule->map_url }}" target="_blank" rel="noopener noreferrer">{{ $registration->schedule->map_address }}</a>
+                                @else
+                                    {{ $registration->schedule?->map_address ?? '-' }}
+                                @endif
                             </div>
                         </td>
                         <td>

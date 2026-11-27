@@ -36,9 +36,10 @@
 
             <div class="col-lg-4 text-center d-none d-lg-block">
                 <img
-                    src="{{ asset('images/donor-illustration.svg') }}"
-                    class="welcome-art"
-                    alt=""
+                    src="{{ asset('images/dashboard-donor.png') }}"
+                    class="welcome-art content-illustration"
+                    alt="Ilustrasi dashboard pendonor darah"
+                    loading="lazy"
                 >
             </div>
         </div>

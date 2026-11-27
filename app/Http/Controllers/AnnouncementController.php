@@ -23,7 +23,8 @@ class AnnouncementController extends Controller
     public function create()
     {
         $this->authorizeAdmin();
-        return view('admin.announcements.form', ['announcement' => new Announcement()]);
+
+        return view('admin.announcements.form', ['announcement' => new Announcement]);
     }
 
     public function store(Request $request)
@@ -43,6 +44,7 @@ class AnnouncementController extends Controller
     public function edit(Announcement $pengumuman)
     {
         $this->authorizeAdmin();
+
         return view('admin.announcements.form', ['announcement' => $pengumuman]);
     }
 

@@ -7,7 +7,7 @@
     <div class="row g-0 h-100">
         <div class="col-lg-5 auth-brand-panel">
             <div class="auth-brand-content">
-                <img src="{{ asset('images/auth-blood.svg') }}" class="auth-illustration" alt="">
+                <img src="{{ asset('images/register-donor.png') }}" class="auth-illustration content-illustration" alt="Ilustrasi registrasi akun donor darah">
                 <h2 class="display-6 fw-bold text-white text-center mt-3">DonorDarah</h2>
                 <p class="text-white text-center opacity-75 mb-0">Bergabung dan jadilah pendonor darah untuk membantu sesama.</p>
             </div>
@@ -40,6 +40,7 @@
                                 <option value="">Pilih jenis kelamin</option>
                                 <option value="Laki-laki" @selected(old('jenis_kelamin') === 'Laki-laki')>Laki-laki</option>
                                 <option value="Perempuan" @selected(old('jenis_kelamin') === 'Perempuan')>Perempuan</option>
+                                 layanan dono
                             </select>
                         </div>
                         <div class="col-md-6">
