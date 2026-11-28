@@ -8,14 +8,14 @@
     <p class="text-secondary">Pilih jadwal donor yang sesuai. Pendaftaran tersedia bagi akun pendonor yang sudah disetujui.</p>
 </div>
 
-<div class="row g-3 mb-5">
+<div class="row g-3 mb-5 schedule-grid">
     @forelse ($schedules as $schedule)
         @php
             $registered = in_array($schedule->id, $registeredScheduleIds);
             $remaining = max(0, $schedule->quota - $schedule->reserved_count);
         @endphp
         <div class="col-md-6 col-xl-4">
-            <div class="card border-0 shadow-sm h-100">
+            <div class="card border-0 shadow-sm h-100 schedule-card">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-start gap-2">
                         <span class="badge text-bg-success">Dibuka</span>

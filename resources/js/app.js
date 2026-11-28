@@ -19,10 +19,141 @@ function formatRupiahDigits(value) {
     return digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
+function renderChatMarkdown(markdown) {
+    const fragment = document.createDocumentFragment();
+    const lines = markdown
+        .replace(/\\([*_`~])/g, '$1')
+        .replace(/([0-9])\\\./g, '$1.')
+        .split(/\r?\n/);
+    let paragraphLines = [];
+    let activeList = null;
+
+    const appendInline = (container, text) => {
+        const tokenPattern = /(\*\*[^*]+\*\*|__[^_]+__|\*[^*\n]+\*|_[^_\n]+_|`[^`]+`|\[[^\]]+\]\(https?:\/\/[^\s)]+\))/g;
+        let previousIndex = 0;
+
+        for (const match of text.matchAll(tokenPattern)) {
+            const token = match[0];
+            const index = match.index;
+            container.append(document.createTextNode(text.slice(previousIndex, index)));
+
+            if (token.startsWith('**') || token.startsWith('__')) {
+                const strong = document.createElement('strong');
+                strong.textContent = token.slice(2, -2);
+                container.append(strong);
+            } else if (token.startsWith('`')) {
+                const code = document.createElement('code');
+                code.textContent = token.slice(1, -1);
+                container.append(code);
+            } else if (token.startsWith('[')) {
+                const linkMatch = token.match(/^\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/);
+                const link = document.createElement('a');
+                link.textContent = linkMatch[1];
+                link.href = linkMatch[2];
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                container.append(link);
+            } else {
+                const emphasis = document.createElement('em');
+                emphasis.textContent = token.slice(1, -1);
+                container.append(emphasis);
+            }
+
+            previousIndex = index + token.length;
+        }
+
+        container.append(document.createTextNode(text.slice(previousIndex)));
+    };
+
+    const flushParagraph = () => {
+        if (paragraphLines.length === 0) {
+            return;
+        }
+
+        const paragraph = document.createElement('p');
+        appendInline(paragraph, paragraphLines.join(' '));
+        fragment.append(paragraph);
+        paragraphLines = [];
+    };
+
+    const flushList = () => {
+        if (activeList) {
+            fragment.append(activeList);
+            activeList = null;
+        }
+    };
+
+    for (const line of lines) {
+        const trimmedLine = line.trim();
+        const listMatch = trimmedLine.match(/^([-*+]\s+|\d+\.\s+)(.+)$/);
+        const headingMatch = trimmedLine.match(/^(#{1,3})\s+(.+)$/);
+
+        if (trimmedLine === '') {
+            flushParagraph();
+            flushList();
+            continue;
+        }
+
+        if (listMatch) {
+            flushParagraph();
+            const isOrdered = /^\d/.test(listMatch[1]);
+            const listTag = isOrdered ? 'ol' : 'ul';
+
+            if (!activeList || activeList.tagName.toLowerCase() !== listTag) {
+                flushList();
+                activeList = document.createElement(listTag);
+            }
+
+            const item = document.createElement('li');
+            appendInline(item, listMatch[2]);
+            activeList.append(item);
+            continue;
+        }
+
+        flushList();
+
+        if (headingMatch) {
+            flushParagraph();
+            const heading = document.createElement(`h${headingMatch[1].length + 2}`);
+            appendInline(heading, headingMatch[2]);
+            fragment.append(heading);
+            continue;
+        }
+
+        paragraphLines.push(trimmedLine);
+    }
+
+    flushParagraph();
+    flushList();
+
+    return fragment;
+}
+
 /**
  * Jalankan setelah halaman selesai dimuat.
  */
 document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-row-href]').forEach((row) => {
+        row.addEventListener('click', (event) => {
+            if (!(event.target instanceof Element)) {
+                return;
+            }
+
+            if (event.target.closest('a, button, form, input, select, textarea')) {
+                return;
+            }
+
+            window.location.assign(row.dataset.rowHref);
+        });
+
+        row.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                window.location.assign(row.dataset.rowHref);
+            }
+        });
+    });
+
     const proofLightbox = document.getElementById('proofLightbox');
     const proofLightboxImage = document.getElementById('proofLightboxImage');
     let activeProofTrigger = null;
@@ -76,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .map((link) => document.getElementById(link.dataset.sectionLink))
             .filter(Boolean);
         const indicator = sectionNav.querySelector('.nav-indicator');
+        let pendingSectionId = null;
 
         function updateIndicator() {
             const activeLink = sectionNav.querySelector('.nav-link.active');
@@ -84,14 +216,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            const navBounds = sectionNav.getBoundingClientRect();
+            const linkBounds = activeLink.getBoundingClientRect();
+
             if (window.matchMedia('(max-width: 991.98px)').matches) {
                 indicator.style.width = '3px';
-                indicator.style.height = `${activeLink.offsetHeight}px`;
-                indicator.style.transform = `translateY(${activeLink.offsetTop}px)`;
+                indicator.style.height = `${linkBounds.height}px`;
+                indicator.style.transform = `translateY(${linkBounds.top - navBounds.top}px)`;
             } else {
-                indicator.style.width = `${activeLink.offsetWidth}px`;
+                indicator.style.width = `${linkBounds.width}px`;
                 indicator.style.height = '3px';
-                indicator.style.transform = `translateX(${activeLink.offsetLeft}px)`;
+                indicator.style.transform = `translateX(${linkBounds.left - navBounds.left}px)`;
             }
         }
 
@@ -116,11 +251,34 @@ document.addEventListener('DOMContentLoaded', () => {
             const activationLine = (navbar?.offsetHeight ?? 0) + 30;
             let currentSection = sections[0];
 
-            sections.forEach((section) => {
-                if (section.getBoundingClientRect().top <= activationLine) {
-                    currentSection = section;
+            const isAtPageBottom = window.scrollY + window.innerHeight
+                >= document.documentElement.scrollHeight - 2;
+
+            if (pendingSectionId) {
+                const pendingSection = document.getElementById(pendingSectionId);
+
+                if (
+                    ! pendingSection ||
+                    pendingSection.getBoundingClientRect().top <= activationLine ||
+                    isAtPageBottom
+                ) {
+                    pendingSectionId = null;
+                } else {
+                    setActiveSection(pendingSectionId);
+
+                    return;
                 }
-            });
+            }
+
+            if (isAtPageBottom) {
+                currentSection = sections[sections.length - 1];
+            } else {
+                sections.forEach((section) => {
+                    if (section.getBoundingClientRect().top <= activationLine) {
+                        currentSection = section;
+                    }
+                });
+            }
 
             if (currentSection) {
                 setActiveSection(currentSection.id);
@@ -128,8 +286,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         sectionLinks.forEach((link) => {
-            link.addEventListener('click', () => {
+            link.addEventListener('click', (event) => {
+                const sectionId = link.dataset.sectionLink;
+                const target = document.getElementById(sectionId);
+
+                if (! target) {
+                    return;
+                }
+
+                event.preventDefault();
+                pendingSectionId = sectionId;
                 setActiveSection(link.dataset.sectionLink);
+                history.replaceState(null, '', `#${sectionId}`);
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
                 const collapse = document.getElementById('publicNavbar');
 
@@ -151,6 +320,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 scrollFrame = null;
             });
         }, { passive: true });
+
+        const cancelPendingNavigation = () => {
+            if (pendingSectionId) {
+                pendingSectionId = null;
+                updateActiveSection();
+            }
+        };
+
+        window.addEventListener('scrollend', cancelPendingNavigation, { passive: true });
+        window.addEventListener('wheel', cancelPendingNavigation, { passive: true });
+        window.addEventListener('touchstart', cancelPendingNavigation, { passive: true });
 
         window.addEventListener('resize', updateIndicator);
         document.getElementById('publicNavbar')?.addEventListener('shown.bs.collapse', updateIndicator);
@@ -708,122 +888,115 @@ document.addEventListener('click', (event) => {
     });
 });
 
-const initializeSectionNavigation = () => {
-    const sectionLinks = Array.from(
-        document.querySelectorAll('nav a[href*="#beranda"], nav a[href*="#informasi"], nav a[href*="#layanan"]'),
-    );
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('donorChatForm');
+    const transcript = document.getElementById('donorChatTranscript');
+    const input = document.getElementById('donorChatInput');
+    const sendButton = document.getElementById('donorChatSend');
+    const status = document.getElementById('donorChatStatus');
+    const clearButton = document.getElementById('clearDonorChat');
 
-    if (sectionLinks.length === 0) {
+    if (!form || !transcript || !input || !sendButton || !status) {
         return;
     }
 
-    const findSectionByHeading = (phrase) => {
-        const heading = Array.from(document.querySelectorAll('h1, h2, h3, h4')).find((element) =>
-            element.textContent.trim().toLocaleLowerCase().includes(phrase),
-        );
-
-        if (!heading) {
-            return null;
-        }
-
-        return heading.closest('section') ?? heading.parentElement?.parentElement ?? heading;
-    };
-
-    const informationSection = findSectionByHeading('donor darah, mulai dari sini');
-    const servicesSection = findSectionByHeading('kelola proses donor dari satu akun');
-
-    if (informationSection && !informationSection.id) {
-        informationSection.id = 'landing-informasi';
-    }
-
-    if (servicesSection && !servicesSection.id) {
-        servicesSection.id = 'landing-layanan';
-    }
-
-    const getSectionForLink = (link) => {
-        const label = link.textContent.trim().toLocaleLowerCase();
-
-        if (label.includes('informasi') && informationSection) {
-            return informationSection;
-        }
-
-        if (label.includes('layanan') && servicesSection) {
-            return servicesSection;
-        }
-
-        const sectionId = link.hash ? decodeURIComponent(link.hash.slice(1)) : '';
-
-        return sectionId ? document.getElementById(sectionId) : null;
-    };
-
-    const setActiveLink = (activeLink) => {
-        sectionLinks.forEach((link) => {
-            const isActive = link === activeLink;
-            const item = link.closest('li');
-
-            link.classList.toggle('active', isActive);
-            item?.classList.toggle('active', isActive);
-
-            if (isActive) {
-                link.setAttribute('aria-current', 'location');
-            } else {
-                link.removeAttribute('aria-current');
-            }
-        });
-    };
-
-    const updateActiveLinkFromScroll = () => {
-        const navigationHeight = document.querySelector('nav')?.getBoundingClientRect().height ?? 0;
-        const scrollOffset = Math.max(160, navigationHeight + 72);
-        let currentLink = sectionLinks[0];
-
-        sectionLinks.forEach((link) => {
-            const section = getSectionForLink(link);
-
-            if (section && section.getBoundingClientRect().top <= scrollOffset) {
-                currentLink = link;
-            }
-        });
-
-        setActiveLink(currentLink);
-    };
-
-    sectionLinks.forEach((link) => {
-        link.addEventListener('click', (event) => {
-            const target = getSectionForLink(link);
-
-            if (!target) {
-                return;
-            }
-
-            event.preventDefault();
-            setActiveLink(link);
-            if (target.id) {
-                history.replaceState(null, '', `#${target.id}`);
-            }
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
+    transcript.querySelectorAll('.chat-message-content').forEach((content) => {
+        content.replaceChildren(renderChatMarkdown(content.textContent));
     });
 
-    let scrollUpdateScheduled = false;
-    window.addEventListener('scroll', () => {
-        if (scrollUpdateScheduled) {
+    const appendMessage = (role, text) => {
+        const message = document.createElement('div');
+        message.className = `chat-message chat-message-${role}`;
+        message.dataset.chatTurn = 'true';
+
+        const label = document.createElement('span');
+        label.className = 'chat-message-label';
+        label.textContent = role === 'user' ? 'Anda' : 'Asisten';
+
+        const content = document.createElement('div');
+        content.className = 'chat-message-content';
+        content.textContent = text;
+        message.append(label, content);
+        content.replaceChildren(renderChatMarkdown(text));
+        transcript.append(message);
+        transcript.scrollTop = transcript.scrollHeight;
+
+        return message;
+    };
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const message = input.value.trim();
+
+        if (!message || sendButton.disabled) {
             return;
         }
 
-        scrollUpdateScheduled = true;
-        window.requestAnimationFrame(() => {
-            updateActiveLinkFromScroll();
-            scrollUpdateScheduled = false;
+        const history = Array.from(transcript.querySelectorAll('[data-chat-turn="true"]'))
+            .map((chatMessage) => ({
+                role: chatMessage.classList.contains('chat-message-user') ? 'user' : 'assistant',
+                text: chatMessage.querySelector('.chat-message-content').textContent,
+            }))
+            .slice(-11);
+
+        appendMessage('user', message);
+        input.value = '';
+        sendButton.disabled = true;
+        status.textContent = 'Sedang menyiapkan jawaban...';
+        const waitingMessage = appendMessage('assistant', 'Sedang mencari jawaban...');
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': form.querySelector('input[name="_token"]').value,
+                },
+                body: JSON.stringify({ message, history }),
+            });
+            const data = await response.json();
+            const replyContent = waitingMessage.querySelector('.chat-message-content');
+            const replyText = response.ok
+                ? data.reply
+                : (data.message ?? 'Permintaan belum dapat diproses. Silakan coba kembali.');
+            replyContent.replaceChildren(renderChatMarkdown(replyText));
+            status.textContent = response.ok ? 'Jawaban AI bersifat edukatif.' : 'Silakan periksa konfigurasi lalu coba kembali.';
+        } catch {
+            waitingMessage.querySelector('.chat-message-content').textContent = 'Terjadi kendala saat menghubungi chatbot. Silakan coba kembali.';
+            status.textContent = 'Koneksi chatbot terganggu.';
+        } finally {
+            sendButton.disabled = false;
+            input.focus();
+            transcript.scrollTop = transcript.scrollHeight;
+        }
+    });
+
+    input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            form.requestSubmit();
+        }
+    });
+
+    document.querySelectorAll('.chat-suggestion').forEach((button) => {
+        button.addEventListener('click', () => {
+            input.value = button.textContent.trim();
+            form.requestSubmit();
         });
-    }, { passive: true });
+    });
 
-    updateActiveLinkFromScroll();
-};
+    clearButton?.addEventListener('click', () => {
+        transcript.replaceChildren(transcript.firstElementChild);
+        input.value = '';
+        status.textContent = 'Percakapan telah dibersihkan.';
+    });
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeSectionNavigation, { once: true });
-} else {
-    initializeSectionNavigation();
-}
+    window.addEventListener('pagehide', () => {
+        transcript.replaceChildren(transcript.firstElementChild);
+        input.value = '';
+    });
+
+    transcript.scrollTop = transcript.scrollHeight;
+});
 

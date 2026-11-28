@@ -4,6 +4,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DonorChatController;
 use App\Http\Controllers\DonorRegistrationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduleAdminController;
@@ -75,6 +76,13 @@ Route::middleware('auth')->group(function () {
         'index',
     ])->name('donor.registrations.index');
 
+    Route::get('/bantuan-donor', [DonorChatController::class, 'index'])
+        ->name('donor.chat.index');
+
+    Route::post('/bantuan-donor', [DonorChatController::class, 'message'])
+        ->middleware('throttle:20,1')
+        ->name('donor.chat.message');
+
     Route::get('/pendaftaran-donor/{schedule}/form', [
         DonorRegistrationController::class,
         'create',
@@ -124,14 +132,12 @@ Route::prefix('admin')
         /*
         | Pendaftaran dan pembayaran
         |
-        | Pembayaran tidak memiliki menu terpisah.
-        | Verifikasi dilakukan dari halaman Pendaftaran.
+        | Pendaftaran dan pembayaran dikelola dari detail jadwal donor.
         */
 
-        Route::get('/pendaftaran', [
-            DonorRegistrationController::class,
-            'adminIndex',
-        ])->name('registrations.index');
+        Route::get('/pendaftaran', function () {
+            return redirect()->route('admin.schedules.index');
+        })->name('registrations.index');
 
         Route::patch('/pendaftaran/{registration}/status', [
             DonorRegistrationController::class,
@@ -146,12 +152,11 @@ Route::prefix('admin')
         /*
         | Kompatibilitas route lama
         |
-        | Jika ada view lama yang memanggil admin.payments.index,
-        | Laravel akan mengarahkannya ke halaman Pendaftaran.
+        | Route lama diarahkan ke daftar jadwal donor.
         */
 
         Route::get('/payments', function () {
-            return redirect()->route('admin.registrations.index');
+            return redirect()->route('admin.schedules.index');
         })->name('payments.index');
 
         /*
@@ -161,8 +166,16 @@ Route::prefix('admin')
         Route::get('/jadwal', [ScheduleAdminController::class, 'index'])
             ->name('schedules.index');
 
+        Route::get('/jadwal/{schedule}/pendaftar/{registration}', [
+            DonorRegistrationController::class,
+            'adminShow',
+        ])->scopeBindings()->name('schedules.registrations.show');
+
         Route::get('/jadwal/create', [ScheduleAdminController::class, 'create'])
             ->name('schedules.create');
+
+        Route::get('/jadwal/{schedule}', [ScheduleAdminController::class, 'show'])
+            ->name('schedules.show');
 
         Route::post('/jadwal', [ScheduleAdminController::class, 'store'])
             ->name('schedules.store');

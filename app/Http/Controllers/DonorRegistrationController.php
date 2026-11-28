@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\DonorNotification;
 use App\Models\DonorRegistration;
 use App\Models\DonorSchedule;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -431,77 +433,19 @@ class DonorRegistrationController extends Controller
     }
 
     /**
-     * Halaman verifikasi pendaftaran admin.
+     * Menampilkan detail pendaftaran dari detail jadwal donor.
      */
-    public function adminIndex(Request $request)
-    {
+    public function adminShow(
+        DonorSchedule $schedule,
+        DonorRegistration $registration
+    ): View {
         $this->authorizeAdmin();
 
-        $filters = $request->validate([
-            'search' => [
-                'nullable',
-                'string',
-                'max:100',
-            ],
+        abort_unless($registration->donor_schedule_id === $schedule->id, 404);
 
-            'date' => [
-                'nullable',
-                'date_format:Y-m-d',
-            ],
+        $registration->load(['user', 'schedule']);
 
-            'tab' => [
-                'nullable',
-                'in:registrations,payments',
-            ],
-        ]);
-
-        $activeTab = $filters['tab'] ?? 'registrations';
-
-        $query = DonorRegistration::query()
-            ->with(['user', 'schedule']);
-
-        if ($activeTab === 'payments') {
-            $query
-                ->whereNotNull('payment_proof')
-                ->where('payment_status', 'pending');
-        } else {
-            $query->where('registration_status', 'pending');
-        }
-
-        if (! empty($filters['search'])) {
-            $search = trim($filters['search']);
-
-            $query->whereHas('user', function ($userQuery) use ($search) {
-                $userQuery->where(
-                    'name',
-                    'like',
-                    "%{$search}%"
-                );
-            });
-        }
-
-        /*
-         * Tanggal yang digunakan adalah tanggal
-         * pembuatan akun pendonor.
-         */
-        if (! empty($filters['date'])) {
-            $query->whereHas('schedule', function ($scheduleQuery) use ($filters) {
-                $scheduleQuery->whereDate(
-                    'schedule_date',
-                    $filters['date']
-                );
-            });
-        }
-
-        $registrations = $query
-            ->latest()
-            ->paginate(10)
-            ->withQueryString();
-
-        return view(
-            'admin.registrations.index',
-            compact('activeTab', 'registrations')
-        );
+        return view('admin.registrations.show', compact('registration', 'schedule'));
     }
 
     /**
@@ -510,7 +454,7 @@ class DonorRegistrationController extends Controller
     public function adminUpdateStatus(
         Request $request,
         DonorRegistration $registration
-    ) {
+    ): RedirectResponse {
         $this->authorizeAdmin();
 
         $data = $request->validate([
@@ -560,7 +504,7 @@ class DonorRegistrationController extends Controller
     public function adminUpdatePayment(
         Request $request,
         DonorRegistration $registration
-    ) {
+    ): RedirectResponse {
         $this->authorizeAdmin();
 
         abort_unless(

@@ -36,7 +36,7 @@
 
             <div class="col-lg-4 text-center d-none d-lg-block">
                 <img
-                    src="{{ asset('images/dashboard-donor.png') }}"
+                    src="{{ asset('images/Gambar_Dashboard.webp') }}"
                     class="welcome-art content-illustration"
                     alt="Ilustrasi dashboard pendonor darah"
                     loading="lazy"
@@ -45,7 +45,7 @@
         </div>
     </section>
 
-    <section class="card border-0 shadow-sm mb-4">
+    <section class="card border-0 shadow-sm mb-4 dashboard-panel">
         <div class="card-body p-3 p-lg-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
             <div>
                 <h2 class="h5 fw-bold mb-1">Status Verifikasi Akun</h2>
@@ -72,7 +72,7 @@
 
     <div class="row g-3 mb-4">
         <div class="col-md-4">
-            <div class="stat-card h-100">
+                <div class="stat-card h-100">
                 <div class="stat-icon stat-icon-red">▦</div>
                 <div>
                     <div class="h3 fw-bold mb-0">{{ $totalRegistrations }}</div>
@@ -102,8 +102,8 @@
         </div>
     </div>
 
-    <section class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3">
+    <section class="card border-0 shadow-sm mb-4 dashboard-panel">
+        <div class="card-header dashboard-panel-header py-3">
             <h2 class="h5 fw-bold mb-0">Notifikasi</h2>
         </div>
         <div class="card-body">
@@ -121,8 +121,8 @@
         </div>
     </section>
 
-    <section class="card border-0 shadow-sm">
-        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+    <section class="card border-0 shadow-sm dashboard-panel">
+        <div class="card-header dashboard-panel-header py-3 d-flex justify-content-between align-items-center">
             <h2 class="h5 fw-bold mb-0">Pendaftaran Terbaru</h2>
             <a href="{{ route('donor.registrations.index') }}" class="link-danger fw-semibold small">
                 Lihat Riwayat →
@@ -193,8 +193,8 @@
         </div>
     </section>
 
-    <section class="card border-0 shadow-sm mt-4">
-        <div class="card-header bg-white py-3">
+    <section class="card border-0 shadow-sm mt-4 dashboard-panel">
+        <div class="card-header dashboard-panel-header py-3">
             <h2 class="h5 fw-bold mb-0">Pengumuman</h2>
             <p class="small text-secondary mb-0">Informasi terbaru dari pengelola donor.</p>
         </div>

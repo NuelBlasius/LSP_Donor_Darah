@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\DonorSchedule;
 use GuzzleHttp\TransferStats;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -24,16 +26,25 @@ class ScheduleAdminController extends Controller
     /**
      * Menampilkan seluruh jadwal.
      */
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $this->authorizeAdmin();
 
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:100'],
             'date' => ['nullable', 'date_format:Y-m-d'],
+            'queue' => ['nullable', 'in:registrations,payments'],
         ]);
 
-        $query = DonorSchedule::query();
+        $query = DonorSchedule::query()
+            ->withCount([
+                'registrations as registered_count' => function ($registrationQuery) {
+                    $registrationQuery->whereIn('registration_status', [
+                        'pending',
+                        'approved',
+                    ]);
+                },
+            ]);
 
         if (! empty($filters['search'])) {
             $query->where('title', 'like', '%'.trim($filters['search']).'%');
@@ -41,6 +52,20 @@ class ScheduleAdminController extends Controller
 
         if (! empty($filters['date'])) {
             $query->whereDate('schedule_date', $filters['date']);
+        }
+
+        if (($filters['queue'] ?? null) === 'registrations') {
+            $query->whereHas('registrations', function ($registrationQuery) {
+                $registrationQuery->where('registration_status', 'pending');
+            });
+        }
+
+        if (($filters['queue'] ?? null) === 'payments') {
+            $query->whereHas('registrations', function ($registrationQuery) {
+                $registrationQuery
+                    ->whereNotNull('payment_proof')
+                    ->where('payment_status', 'pending');
+            });
         }
 
         $schedules = $query
@@ -55,9 +80,52 @@ class ScheduleAdminController extends Controller
     }
 
     /**
+     * Menampilkan detail jadwal dan daftar pendonor yang mendaftar.
+     */
+    public function show(Request $request, DonorSchedule $schedule): View
+    {
+        $this->authorizeAdmin();
+
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+            'date' => ['nullable', 'date_format:Y-m-d'],
+        ]);
+
+        $registrationsQuery = $schedule->registrations()->with('user');
+
+        if (! empty($filters['search'])) {
+            $search = trim($filters['search']);
+
+            $registrationsQuery->whereHas('user', function ($userQuery) use ($search) {
+                $userQuery->where('name', 'like', "%{$search}%");
+            });
+        }
+
+        if (! empty($filters['date'])) {
+            $registrationsQuery->whereDate('created_at', $filters['date']);
+        }
+
+        $registrations = $registrationsQuery
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $schedule->loadCount([
+            'registrations as registered_count' => function ($registrationQuery) {
+                $registrationQuery->whereIn('registration_status', [
+                    'pending',
+                    'approved',
+                ]);
+            },
+        ]);
+
+        return view('admin.schedules.show', compact('schedule', 'registrations'));
+    }
+
+    /**
      * Form tambah jadwal.
      */
-    public function create()
+    public function create(): View
     {
         $this->authorizeAdmin();
 
@@ -72,7 +140,7 @@ class ScheduleAdminController extends Controller
     /**
      * Simpan jadwal baru.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->authorizeAdmin();
 
@@ -91,7 +159,7 @@ class ScheduleAdminController extends Controller
     /**
      * Form edit jadwal.
      */
-    public function edit(DonorSchedule $schedule)
+    public function edit(DonorSchedule $schedule): View
     {
         $this->authorizeAdmin();
 
@@ -107,7 +175,7 @@ class ScheduleAdminController extends Controller
     public function update(
         Request $request,
         DonorSchedule $schedule
-    ) {
+    ): RedirectResponse {
         $this->authorizeAdmin();
 
         $schedule->update(
@@ -125,7 +193,7 @@ class ScheduleAdminController extends Controller
     /**
      * Hapus jadwal.
      */
-    public function destroy(DonorSchedule $schedule)
+    public function destroy(DonorSchedule $schedule): RedirectResponse
     {
         $this->authorizeAdmin();
 

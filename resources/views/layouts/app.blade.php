@@ -22,7 +22,7 @@
         <nav class="navbar navbar-expand-lg public-navbar bg-white border-bottom sticky-top">
             <div class="container">
                 <a class="navbar-brand fw-bold text-danger d-flex align-items-center gap-2" href="{{ route('home') }}">
-                    <img src="{{ asset('images/logo-donor.png') }}" class="site-logo" alt="Logo DonorDarah" width="36" height="36">
+                    <img src="{{ asset('images/Gambar_Logo_Icon.webp') }}" class="site-logo" alt="Logo DonorDarah" width="36" height="36">
                     DonorDarah
                 </a>
 
@@ -47,6 +47,11 @@
                                 href="{{ route('home') }}#beranda"
                             >
                                 Beranda
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-section-link="about-us" href="{{ route('home') }}#about-us">
+                                About Us
                             </a>
                         </li>
                         <li class="nav-item">
@@ -98,7 +103,7 @@
     <div class="app-shell">
         <aside class="app-sidebar d-none d-lg-flex flex-column">
             <a class="sidebar-brand text-white text-decoration-none" href="{{ $appHome }}">
-                <img src="{{ asset('images/logo-donor.png') }}" class="site-logo site-logo-sidebar" alt="Logo DonorDarah" width="36" height="36">
+                <img src="{{ asset('images/Gambar_Logo_Icon.webp') }}" class="site-logo site-logo-sidebar" alt="Logo DonorDarah" width="36" height="36">
                 DonorDarah
             </a>
 
@@ -114,9 +119,6 @@
                 <a @class(['sidebar-link', 'active' => request()->routeIs('admin.schedules.*')]) href="{{ route('admin.schedules.index') }}">
                     <span>▣</span> Jadwal Donor
                 </a>
-                <a @class(['sidebar-link', 'active' => request()->routeIs('admin.registrations.*')]) href="{{ route('admin.registrations.index') }}">
-                    <span>☷</span> Verifikasi Pendaftaran
-                </a>
                 <a @class(['sidebar-link', 'active' => request()->routeIs('admin.announcements.*')]) href="{{ route('admin.announcements.index') }}">
                     <span>▧</span> Pengumuman
                 </a>
@@ -129,6 +131,9 @@
                 </a>
                 <a @class(['sidebar-link', 'active' => request()->routeIs('donor.registrations.*')]) href="{{ route('donor.registrations.index') }}">
                     <span>◷</span> Riwayat Donor
+                </a>
+                <a @class(['sidebar-link', 'active' => request()->routeIs('donor.chat.*')]) href="{{ route('donor.chat.index') }}">
+                    <span aria-hidden="true">✦</span> AI Chatbot
                 </a>
                 <a @class(['sidebar-link', 'active' => request()->routeIs('profile.*')]) href="{{ route('profile.edit') }}">
                     <span>♙</span> Profil Saya
@@ -166,7 +171,7 @@
                     </button>
 
                     <div>
-                        <h1 class="h4 fw-bold mb-0">@yield('page-title', $pageTitle)</h1>
+                        <h1 class="h4 fw-bold mb-0">{{ $isAdmin ? 'Dashboard Admin' : trim($__env->yieldContent('page-title', $pageTitle)) }}</h1>
                         <div class="small text-secondary d-none d-sm-block">
                             Sistem Pendaftaran Donor Darah Online
                         </div>
@@ -192,7 +197,7 @@
             >
                 <div class="offcanvas-header app-sidebar-mobile-head">
                     <h2 class="offcanvas-title h5 fw-bold text-white" id="mobileSidebarLabel">
-                        <img src="{{ asset('images/logo-donor.png') }}" class="site-logo site-logo-sidebar" alt="Logo DonorDarah" width="36" height="36">
+                        <img src="{{ asset('images/Gambar_Logo_Icon.webp') }}" class="site-logo site-logo-sidebar" alt="Logo DonorDarah" width="36" height="36">
                         DonorDarah
                     </h2>
                     <button
@@ -208,12 +213,12 @@
                         <a @class(['sidebar-link', 'active' => request()->routeIs('admin.dashboard')]) href="{{ route('admin.dashboard') }}">▦ Dashboard</a>
                         <a @class(['sidebar-link', 'active' => request()->routeIs('admin.accounts.*')]) href="{{ route('admin.accounts.index') }}">♙ Verifikasi Akun</a>
                         <a @class(['sidebar-link', 'active' => request()->routeIs('admin.schedules.*')]) href="{{ route('admin.schedules.index') }}">▣ Jadwal Donor</a>
-                        <a @class(['sidebar-link', 'active' => request()->routeIs('admin.registrations.*')]) href="{{ route('admin.registrations.index') }}">☷ Verifikasi Pendaftaran</a>
                         <a @class(['sidebar-link', 'active' => request()->routeIs('admin.announcements.*')]) href="{{ route('admin.announcements.index') }}">▧ Pengumuman</a>
                     @else
                         <a @class(['sidebar-link', 'active' => request()->routeIs('dashboard')]) href="{{ route('dashboard') }}">▦ Dashboard</a>
                         <a @class(['sidebar-link', 'active' => request()->routeIs('services')]) href="{{ route('services') }}">▣ Layanan Donor</a>
                         <a @class(['sidebar-link', 'active' => request()->routeIs('donor.registrations.*')]) href="{{ route('donor.registrations.index') }}">◷ Riwayat Donor</a>
+                        <a @class(['sidebar-link', 'active' => request()->routeIs('donor.chat.*')]) href="{{ route('donor.chat.index') }}">✦ AI Chatbot</a>
                         <a @class(['sidebar-link', 'active' => request()->routeIs('profile.*')]) href="{{ route('profile.edit') }}">♙ Profil Saya</a>
                     @endif
 
@@ -253,7 +258,7 @@
     @if (!$isAuthPage)
         <footer class="border-top bg-white mt-5">
             <div class="container py-4 d-flex flex-column flex-md-row justify-content-between gap-2">
-                <span class="fw-semibold text-danger">🩸 DonorDarah</span>
+                <span class="fw-semibold text-danger">© {{ now()->year }} DonorDarah. Seluruh hak cipta dilindungi.</span>
                 <span class="text-secondary small">Sistem Pendaftaran Donor Darah Online</span>
             </div>
         </footer>

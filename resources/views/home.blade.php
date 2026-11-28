@@ -25,7 +25,7 @@
         </div>
         <div class="col-lg-6 hero-illustration">
             <img
-                src="{{ asset('images/landing-donor.png') }}"
+                src="{{ asset('images/Gambar_Landing_Page.webp') }}"
                 class="img-fluid content-illustration"
                 alt="Ilustrasi utama donor darah"
             >
@@ -65,6 +65,51 @@
     </div>
 </section>
 
+<section id="about-us" class="landing-about rounded-4 p-4 p-lg-5 mb-5 landing-section">
+    <div class="about-intro mb-4 mb-lg-5">
+        <span class="badge rounded-pill text-bg-danger mb-3">ABOUT US</span>
+        <h2 class="h2 fw-bold mb-2">Mendukung perjalanan donor darah yang lebih mudah</h2>
+        <p class="text-secondary mb-0">DonorDarah membantu Anda menemukan kegiatan donor, mendaftar secara online, dan mengikuti prosesnya. Berikut gambaran perjalanan donor yang penuh kepedulian.</p>
+    </div>
+
+    <div class="about-stories">
+        <article class="about-story row align-items-center g-4 g-lg-5 mb-3 mb-lg-4">
+            <div class="col-lg-5">
+                <img src="{{ asset('images/DonorDarah_1.webp') }}" class="about-story-image" alt="Petugas kesehatan memeriksa tekanan darah calon pendonor sebelum donor">
+            </div>
+            <div class="col-lg-7">
+                <span class="about-story-step">01 · SEBELUM DONOR</span>
+                <h3 class="h3 fw-bold mt-2 mb-3">Pemeriksaan awal untuk memastikan kesiapan</h3>
+                <p class="text-secondary mb-0">Sebelum mendonor, calon pendonor menjalani pemeriksaan kesehatan awal bersama petugas. Pemeriksaan membantu memastikan kondisi pendonor siap untuk mengikuti proses donor.</p>
+            </div>
+        </article>
+
+        <article class="about-story row align-items-center g-4 g-lg-5 mb-3 mb-lg-4">
+            <div class="col-lg-5 order-lg-2">
+                <img src="{{ asset('images/DonorDarah_2.webp') }}" class="about-story-image" alt="Petugas mengambil darah dari pendonor menggunakan peralatan medis">
+            </div>
+            <div class="col-lg-7 order-lg-1">
+                <span class="about-story-step">02 · SAAT DONOR</span>
+                <h3 class="h3 fw-bold mt-2 mb-3">Proses donor didampingi petugas</h3>
+                <p class="text-secondary mb-0">Petugas mendampingi proses pengambilan darah dan memantau pendonor. Ikuti arahan petugas agar pengalaman donor berjalan tertib dan nyaman.</p>
+            </div>
+        </article>
+
+        <article class="about-story row align-items-center g-4 g-lg-5">
+            <div class="col-lg-5">
+                <img src="{{ asset('images/DonorDarah_3.webp') }}" class="about-story-image" alt="Para pendonor mengikuti kegiatan donor darah bersama">
+            </div>
+            <div class="col-lg-7">
+                <span class="about-story-step">03 · BERBAGI KESEMPATAN</span>
+                <h3 class="h3 fw-bold mt-2 mb-3">Satu kegiatan, banyak kesempatan untuk membantu</h3>
+                <p class="text-secondary mb-4">Kegiatan donor mempertemukan orang-orang yang ingin berbagi dan membantu menjaga ketersediaan darah bagi yang membutuhkan.</p>
+                <a href="#informasi" class="btn btn-danger px-4">Pelajari informasi donor</a>
+            </div>
+        </article>
+    </div>
+</section>
+
+<section id="informasi" class="landing-information landing-section" aria-label="Informasi donor darah">
 <section class="donor-motion-section mb-5" aria-labelledby="donor-motion-title">
     <div class="text-center mb-4">
         <h2 id="donor-motion-title" class="h2 fw-bold">Setetes Darah, Gerakan Penuh Harapan</h2>
@@ -113,7 +158,40 @@
     </div>
 </section>
 
-<section id="informasi" class="mb-5 landing-section">
+<section class="education-videos mb-5" aria-labelledby="education-videos-title">
+    <div class="mb-4">
+        <h2 id="education-videos-title" class="h2 fw-bold">Video Edukasi Donor Darah</h2>
+        <p class="text-secondary mb-0">Tonton informasi singkat untuk mengenal proses dan manfaat donor darah.</p>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-6 col-xl-4">
+            <article class="card education-video-card border-0 shadow-sm h-100">
+                <div class="ratio ratio-16x9 rounded-top overflow-hidden">
+                    <iframe src="https://www.youtube-nocookie.com/embed/QtERwz6GrAo" title="Manfaat donor darah bagi kesehatan" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+                <div class="card-body"><h3 class="h6 fw-bold mb-0">Manfaat Donor Darah bagi Kesehatan</h3></div>
+            </article>
+        </div>
+        <div class="col-md-6 col-xl-4">
+            <article class="card education-video-card border-0 shadow-sm h-100">
+                <div class="ratio ratio-16x9 rounded-top overflow-hidden">
+                    <iframe src="https://www.youtube-nocookie.com/embed/PM_pwd92xfI" title="5 manfaat donor darah bagi kesehatan" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+                <div class="card-body"><h3 class="h6 fw-bold mb-0">5 Manfaat Donor Darah bagi Kesehatan</h3></div>
+            </article>
+        </div>
+        <div class="col-md-6 col-xl-4">
+            <article class="card education-video-card border-0 shadow-sm h-100">
+                <div class="ratio ratio-16x9 rounded-top overflow-hidden">
+                    <iframe src="https://www.youtube-nocookie.com/embed/qSoW4HVO0iA" title="Proses pengolahan darah di PMI" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+                <div class="card-body"><h3 class="h6 fw-bold mb-0">Proses Pengolahan Darah di PMI</h3></div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="mb-5">
     <div class="text-center mb-4">
         <h2 class="h2 fw-bold">Donor Darah, Mulai dari Sini</h2>
         <p class="text-secondary">Beberapa hal yang membantu Anda menjalani proses pendaftaran dengan lancar.</p>
@@ -148,6 +226,7 @@
             </article>
         </div>
     </div>
+</section>
 </section>
 
 <section id="layanan" class="landing-services rounded-4 p-4 p-lg-5 mb-5 landing-section">

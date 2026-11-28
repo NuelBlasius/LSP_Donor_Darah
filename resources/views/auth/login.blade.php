@@ -7,7 +7,7 @@
     <div class="row g-0 h-100">
         <div class="col-lg-5 auth-brand-panel">
             <div class="auth-brand-content">
-                <img src="{{ asset('images/login-donor.png') }}" class="auth-illustration content-illustration" alt="Ilustrasi halaman login donor darah">
+                <img src="{{ asset('images/Gambar_Login_Page.webp') }}" class="auth-illustration content-illustration" alt="Ilustrasi halaman login donor darah">
                 <h2 class="display-6 fw-bold text-white text-center mt-3">DonorDarah</h2>
                 <p class="text-white text-center opacity-75 mb-0">Sistem Pendaftaran Donor Darah Secara Online</p>
             </div>

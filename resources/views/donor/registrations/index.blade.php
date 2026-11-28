@@ -13,7 +13,7 @@
     </a>
 </div>
 
-<form method="GET" action="{{ route('donor.registrations.index') }}" class="card border-0 shadow-sm p-3 mb-3">
+<form method="GET" action="{{ route('donor.registrations.index') }}" class="card border-0 shadow-sm p-3 mb-3 filter-panel">
     <div class="row g-2 align-items-end">
         <div class="col-md-6">
             <label for="search" class="form-label">Nama jadwal</label>
@@ -30,7 +30,7 @@
     </div>
 </form>
 
-<div class="card border-0 shadow-sm">
+<div class="card border-0 shadow-sm history-table-card">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">

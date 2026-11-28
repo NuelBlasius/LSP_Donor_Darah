@@ -5,12 +5,7 @@
 @section('page-title', 'Profil Saya')
 
 @section('content')
-<div class="container-fluid py-4">
-
-    {{-- Header halaman --}}
-    <div class="row justify-content-center">
-        <div class="col-xl-11">
-
+<div class="profile-page">
             <div class="mb-4">
                 <h1 class="h2 fw-bold">Data Profil Pendonor</h1>
                 <p class="text-secondary mb-0">
@@ -287,9 +282,6 @@
 
                 </div>
             </div>
-
-        </div>
-    </div>
 
 </div>
 @endsection
