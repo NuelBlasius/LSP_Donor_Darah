@@ -565,3 +565,265 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+const isLogoutUrl = (value) => {
+    try {
+        return new URL(value, window.location.href).pathname.replace(/\/+$/, '').endsWith('/logout');
+    } catch {
+        return false;
+    }
+};
+
+let pendingLogoutAction = null;
+
+const getLogoutDialog = () => {
+    let dialog = document.getElementById('logout-confirmation-dialog');
+
+    if (dialog) {
+        return dialog;
+    }
+
+    const style = document.createElement('style');
+    style.textContent = `
+        #logout-confirmation-dialog {
+            width: min(100% - 2rem, 24rem);
+            max-width: 24rem;
+            padding: 1.5rem;
+            border: 1px solid #f1d5d9;
+            border-radius: 1rem;
+            color: #172033;
+            box-shadow: 0 1.25rem 3rem rgb(22 32 51 / 20%);
+        }
+        #logout-confirmation-dialog::backdrop {
+            background: rgb(20 25 35 / 45%);
+            backdrop-filter: blur(2px);
+        }
+        #logout-confirmation-dialog h2 {
+            margin: 0 0 .5rem;
+            font-size: 1.25rem;
+        }
+        #logout-confirmation-dialog p {
+            margin: 0;
+            color: #687386;
+        }
+        #logout-confirmation-dialog .logout-dialog-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: .625rem;
+            margin-top: 1.25rem;
+        }
+        #logout-confirmation-dialog button {
+            padding: .55rem .9rem;
+            border: 1px solid #cbd2dc;
+            border-radius: .55rem;
+            background: #fff;
+            color: #344054;
+            font: inherit;
+            cursor: pointer;
+        }
+        #logout-confirmation-dialog button[data-confirm-logout] {
+            border-color: #c91f32;
+            background: #c91f32;
+            color: #fff;
+        }
+    `;
+    document.head.append(style);
+
+    dialog = document.createElement('dialog');
+    dialog.id = 'logout-confirmation-dialog';
+    dialog.setAttribute('aria-labelledby', 'logout-confirmation-title');
+    dialog.innerHTML = `
+        <h2 id="logout-confirmation-title">Keluar dari akun?</h2>
+        <p>Anda yakin ingin mengakhiri sesi saat ini?</p>
+        <div class="logout-dialog-actions">
+            <button type="button" data-cancel-logout>Batal</button>
+            <button type="button" data-confirm-logout>Keluar</button>
+        </div>
+    `;
+
+    dialog.querySelector('[data-cancel-logout]').addEventListener('click', () => {
+        pendingLogoutAction = null;
+        dialog.close();
+    });
+
+    dialog.querySelector('[data-confirm-logout]').addEventListener('click', () => {
+        const action = pendingLogoutAction;
+        pendingLogoutAction = null;
+        dialog.close();
+        action?.();
+    });
+
+    dialog.addEventListener('click', (event) => {
+        if (event.target === dialog) {
+            pendingLogoutAction = null;
+            dialog.close();
+        }
+    });
+
+    dialog.addEventListener('cancel', () => {
+        pendingLogoutAction = null;
+    });
+
+    document.body.append(dialog);
+
+    return dialog;
+};
+
+const confirmLogout = (action) => {
+    pendingLogoutAction = action;
+    getLogoutDialog().showModal();
+};
+
+const confirmedLogoutForms = new WeakSet();
+
+document.addEventListener('submit', (event) => {
+    const form = event.target;
+
+    if (!(form instanceof HTMLFormElement) || !isLogoutUrl(form.action)) {
+        return;
+    }
+
+    if (confirmedLogoutForms.has(form)) {
+        confirmedLogoutForms.delete(form);
+
+        return;
+    }
+
+    event.preventDefault();
+    confirmLogout(() => {
+        confirmedLogoutForms.add(form);
+        form.requestSubmit(event.submitter ?? undefined);
+    });
+});
+
+document.addEventListener('click', (event) => {
+    const logoutLink = event.target.closest('a[href]');
+
+    if (!logoutLink || !isLogoutUrl(logoutLink.href)) {
+        return;
+    }
+
+    event.preventDefault();
+    confirmLogout(() => {
+        window.location.assign(logoutLink.href);
+    });
+});
+
+const initializeSectionNavigation = () => {
+    const sectionLinks = Array.from(
+        document.querySelectorAll('nav a[href*="#beranda"], nav a[href*="#informasi"], nav a[href*="#layanan"]'),
+    );
+
+    if (sectionLinks.length === 0) {
+        return;
+    }
+
+    const findSectionByHeading = (phrase) => {
+        const heading = Array.from(document.querySelectorAll('h1, h2, h3, h4')).find((element) =>
+            element.textContent.trim().toLocaleLowerCase().includes(phrase),
+        );
+
+        if (!heading) {
+            return null;
+        }
+
+        return heading.closest('section') ?? heading.parentElement?.parentElement ?? heading;
+    };
+
+    const informationSection = findSectionByHeading('donor darah, mulai dari sini');
+    const servicesSection = findSectionByHeading('kelola proses donor dari satu akun');
+
+    if (informationSection && !informationSection.id) {
+        informationSection.id = 'landing-informasi';
+    }
+
+    if (servicesSection && !servicesSection.id) {
+        servicesSection.id = 'landing-layanan';
+    }
+
+    const getSectionForLink = (link) => {
+        const label = link.textContent.trim().toLocaleLowerCase();
+
+        if (label.includes('informasi') && informationSection) {
+            return informationSection;
+        }
+
+        if (label.includes('layanan') && servicesSection) {
+            return servicesSection;
+        }
+
+        const sectionId = link.hash ? decodeURIComponent(link.hash.slice(1)) : '';
+
+        return sectionId ? document.getElementById(sectionId) : null;
+    };
+
+    const setActiveLink = (activeLink) => {
+        sectionLinks.forEach((link) => {
+            const isActive = link === activeLink;
+            const item = link.closest('li');
+
+            link.classList.toggle('active', isActive);
+            item?.classList.toggle('active', isActive);
+
+            if (isActive) {
+                link.setAttribute('aria-current', 'location');
+            } else {
+                link.removeAttribute('aria-current');
+            }
+        });
+    };
+
+    const updateActiveLinkFromScroll = () => {
+        const navigationHeight = document.querySelector('nav')?.getBoundingClientRect().height ?? 0;
+        const scrollOffset = Math.max(160, navigationHeight + 72);
+        let currentLink = sectionLinks[0];
+
+        sectionLinks.forEach((link) => {
+            const section = getSectionForLink(link);
+
+            if (section && section.getBoundingClientRect().top <= scrollOffset) {
+                currentLink = link;
+            }
+        });
+
+        setActiveLink(currentLink);
+    };
+
+    sectionLinks.forEach((link) => {
+        link.addEventListener('click', (event) => {
+            const target = getSectionForLink(link);
+
+            if (!target) {
+                return;
+            }
+
+            event.preventDefault();
+            setActiveLink(link);
+            if (target.id) {
+                history.replaceState(null, '', `#${target.id}`);
+            }
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    let scrollUpdateScheduled = false;
+    window.addEventListener('scroll', () => {
+        if (scrollUpdateScheduled) {
+            return;
+        }
+
+        scrollUpdateScheduled = true;
+        window.requestAnimationFrame(() => {
+            updateActiveLinkFromScroll();
+            scrollUpdateScheduled = false;
+        });
+    }, { passive: true });
+
+    updateActiveLinkFromScroll();
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeSectionNavigation, { once: true });
+} else {
+    initializeSectionNavigation();
+}
+
